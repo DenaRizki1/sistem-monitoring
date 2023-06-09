@@ -2,23 +2,22 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'alert_dialog_confirm_widget.dart';
 import 'my_colors.dart';
 import 'page_beranda.dart';
 import 'utils/api.dart';
 import 'utils/constants.dart';
 import 'utils/helpers.dart';
 import 'utils/sessions.dart';
-import 'utils/strings.dart';
-
 
 class PageLogin extends StatefulWidget {
   const PageLogin({Key? key}) : super(key: key);
@@ -28,19 +27,16 @@ class PageLogin extends StatefulWidget {
 }
 
 class _PageLoginState extends State<PageLogin> {
-
-  PackageInfo _packageInfo = PackageInfo(appName: "Unknown", buildNumber: "Unknown", packageName: "Unknown", version: "Unknown", buildSignature: "Unknown");
   late SharedPreferences sharedPreferences;
   final _formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool _passwordVisible = true, _loginLoading = false;
-  String? _jalur = "sd";
   String? sDeviceInfo;
+  bool forceLogin = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getSession();
     _getDeviceInfo();
@@ -78,7 +74,8 @@ class _PageLoginState extends State<PageLogin> {
         backgroundColor: colorPrimary,
         title: const SizedBox(
           width: double.infinity,
-          child: Text("Login",
+          child: Text(
+            "Login",
             textAlign: TextAlign.start,
             style: TextStyle(color: Colors.black, overflow: TextOverflow.ellipsis),
           ),
@@ -165,57 +162,38 @@ class _PageLoginState extends State<PageLogin> {
                       const SizedBox(
                         height: 16,
                       ),
-
                       const SizedBox(
                         height: 16,
                       ),
                       !_loginLoading
                           ? SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child:
-                        // ElevatedButton(
-                        //     onPressed: () {
-                        //       if (_formKey.currentState!.validate()) {
-                        //         FocusScope.of(context).requestFocus(FocusNode());
-                        //         _login(usernameController.text, passwordController.text);
-                        //       }
-                        //     },
-                        //     child: const Text("Masuk")),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20))),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                FocusScope.of(context).requestFocus(FocusNode());
-                                _login(usernameController.text, passwordController.text);
-                              }
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              // ignore: prefer_const_literals_to_create_immutables
-                              children: [
-                                const Text('Masuk', style: TextStyle(color: Colors.white, fontSize: 16),),
-                                const SizedBox(width: 10,),
-                                const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16,),
-                              ],
-                            )),
-                      )
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(primary: Colors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      _login(usernameController.text, passwordController.text);
+                                    }
+                                  },
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text('Masuk', style: TextStyle(color: Colors.white, fontSize: 16)),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+                                    ],
+                                  )),
+                            )
                           : Container(
-                        width: double.infinity,
-                        height: 50,
-                        // color: getColorFromHex("#CCCCCC"),
-                        child: const Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CupertinoActivityIndicator(),
-                          ),
-                        ),
-                      ),
+                              width: double.infinity,
+                              height: 50,
+                              child: const Center(
+                                child: SizedBox(width: 20, height: 20, child: CupertinoActivityIndicator()),
+                              ),
+                            ),
                     ],
                   )),
               const SizedBox(
@@ -229,13 +207,11 @@ class _PageLoginState extends State<PageLogin> {
   }
 
   Future<dynamic> _login(String user, String pass) async {
-
     setState(() {
       _loginLoading = true;
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       String sumber = '', model = '', token = '404';
 
@@ -263,13 +239,13 @@ class _PageLoginState extends State<PageLogin> {
         'model': model,
         'imei': '404',
         'sumber': sumber,
+        'force_login': forceLogin.toString(),
       };
 
       http.Response response = await http.post(
         Uri.parse(urlLogin),
         headers: headers,
         body: param,
-
       );
 
       setState(() {
@@ -283,7 +259,6 @@ class _PageLoginState extends State<PageLogin> {
         if (jsonResponse.containsKey("error")) {
           Helpers.dialogErrorNetwork(context, jsonResponse["error"]);
         } else {
-
           bool success = jsonResponse['success'];
           String message = jsonResponse['message'];
           if (success) {
@@ -291,7 +266,6 @@ class _PageLoginState extends State<PageLogin> {
             setPrefrenceBool(ISFIRSTTIME, true);
             setPrefrence(HASH_USER, data['hash_user']);
             setPrefrence(TOKEN_AUTH, data['token_auth']);
-            // setPrefrence(NIK, data['nik']);
             setPrefrence(PASSWORD, passwordController.text);
             setPrefrence(NAMA, data['nama_lengkap']);
             setPrefrence(EMAIL, data['email']);
@@ -299,32 +273,29 @@ class _PageLoginState extends State<PageLogin> {
             setPrefrence(ALAMAT, data['alamat']);
             setPrefrence(FOTO, data['foto']);
 
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PageBeranda(),
-                ),
-                    (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageBeranda()), (route) => false);
           } else {
-            ArtSweetAlert.show(
-                context: context,
-                artDialogArgs: ArtDialogArgs(
-                  title: 'Gagal',
-                  text: message,
-                  type: ArtSweetAlertType.danger,
-                  confirmButtonText: 'OK',
-                  confirmButtonColor: Colors.red,
-                ));
+            switch (jsonResponse['code'].toString()) {
+              case "0":
+                EasyLoading.showError(jsonResponse['message']);
+                break;
+              case "1":
+                bool result = await showDialog(context: context, builder: (context) => AlertDialogConfirmWidget(message: jsonResponse['message'].toString()));
+                if (result) {
+                  forceLogin = true;
+                  _login(usernameController.text, passwordController.text);
+                }
+                break;
+              default:
+                EasyLoading.showError("Terjadi kesalahan");
+                break;
+            }
           }
-
         }
       } catch (e, stacktrace) {
         log(e.toString());
         log(stacktrace.toString());
-        String customMessage = "${Strings.TERJADI_KESALAHAN}.\n${e.runtimeType.toString()} ${response.statusCode}";
-        // Helpers.dialogErrorNetwork(context, customMessage);
       }
-
     } else {
       setState(() {
         _loginLoading = false;

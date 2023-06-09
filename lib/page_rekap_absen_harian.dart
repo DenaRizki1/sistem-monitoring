@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 
 import 'my_appbar.dart';
 import 'my_colors.dart';
@@ -22,7 +22,6 @@ class PageRekapAbsenHarian extends StatefulWidget {
 }
 
 class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
-
   List<RekapAbsen> listRekapAbsen = [];
 
   String filterTahun = "", filterBulan = "";
@@ -62,7 +61,9 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.calendar_today_rounded),
-                        const SizedBox(width: 10,),
+                        const SizedBox(
+                          width: 10,
+                        ),
                         Text(Helpers.getBulan(filterBulan) + " " + filterTahun),
                       ],
                     ),
@@ -87,83 +88,142 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
                 ),
               ),
             ),
-            const Divider(height: 1, color: Colors.black54,),
+            const Divider(
+              height: 1,
+              color: Colors.black54,
+            ),
             Expanded(
               child: ListView.separated(
                 itemCount: listRekapAbsen.length,
                 itemBuilder: (context, index) => Container(
-                  color: listRekapAbsen[index].jadwal=="1" ? Colors.white : Colors.white,
+                  color: listRekapAbsen[index].jadwal == "1" ? Colors.white : Colors.white,
                   padding: const EdgeInsets.all(16),
-                  child: listRekapAbsen[index].jadwal=="1" ?
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(listRekapAbsen[index].hari+",", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                                Text(listRekapAbsen[index].tanggal + "-" + listRekapAbsen[index].bulan + "-" + listRekapAbsen[index].tahun, style: const TextStyle(fontSize: 12),),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Expanded(child: Text("Absen Masuk", style: TextStyle(fontSize: 12),)),
-                                    const SizedBox(width: 5,),
-                                    const Text(":", style: TextStyle(fontSize: 12),),
-                                    const SizedBox(width: 5,),
-                                    Expanded(child: Text(listRekapAbsen[index].absenMasuk.jamAbsen, style: const TextStyle(fontSize: 12),)),
-                                  ],
-                                ),
-                                if(listRekapAbsen[index].absenMasuk.ketKeterangan!="") Text(listRekapAbsen[index].absenMasuk.ketKeterangan, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                                const SizedBox(height: 5,),
-                                Row(
-                                  children: [
-                                    const Expanded(child: Text("Absen Pulang", style: TextStyle(fontSize: 12),)),
-                                    const SizedBox(width: 5,),
-                                    const Text(":", style: TextStyle(fontSize: 12),),
-                                    const SizedBox(width: 5,),
-                                    Expanded(child: Text(listRekapAbsen[index].absenPulang.jamAbsen, style: const TextStyle(fontSize: 12),)),
-                                  ],
-                                ),
-                                if(listRekapAbsen[index].absenPulang.ketKeterangan!="") Text(listRekapAbsen[index].absenPulang.ketKeterangan, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                      :
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
+                  child: listRekapAbsen[index].jadwal == "1"
+                      ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(listRekapAbsen[index].hari + ",", style: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),),
-                            Text(listRekapAbsen[index].tanggal + "-" + listRekapAbsen[index].bulan + "-" + listRekapAbsen[index].tahun, style: const TextStyle(fontSize: 12.0),),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        listRekapAbsen[index].hari + ",",
+                                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        listRekapAbsen[index].tanggal + "-" + listRekapAbsen[index].bulan + "-" + listRekapAbsen[index].tahun,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Expanded(
+                                              child: Text(
+                                            "Absen Masuk",
+                                            style: TextStyle(fontSize: 12),
+                                          )),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          const Text(
+                                            ":",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                              child: Text(
+                                            listRekapAbsen[index].absenMasuk.jamAbsen,
+                                            style: const TextStyle(fontSize: 12),
+                                          )),
+                                        ],
+                                      ),
+                                      if (listRekapAbsen[index].absenMasuk.ketKeterangan != "")
+                                        Text(
+                                          listRekapAbsen[index].absenMasuk.ketKeterangan,
+                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Expanded(
+                                              child: Text(
+                                            "Absen Pulang",
+                                            style: TextStyle(fontSize: 12),
+                                          )),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          const Text(
+                                            ":",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                              child: Text(
+                                            listRekapAbsen[index].absenPulang.jamAbsen,
+                                            style: const TextStyle(fontSize: 12),
+                                          )),
+                                        ],
+                                      ),
+                                      if (listRekapAbsen[index].absenPulang.ketKeterangan != "")
+                                        Text(
+                                          listRekapAbsen[index].absenPulang.ketKeterangan,
+                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    listRekapAbsen[index].hari + ",",
+                                    style: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    listRekapAbsen[index].tanggal + "-" + listRekapAbsen[index].bulan + "-" + listRekapAbsen[index].tahun,
+                                    style: const TextStyle(fontSize: 12.0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                listRekapAbsen[index].labelJadwal,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(listRekapAbsen[index].labelJadwal, style: const TextStyle(fontSize: 12,),),
-                      ),
-                    ],
-                  ),
                 ),
                 separatorBuilder: (BuildContext context, int index) => const Divider(height: 1),
               ),
@@ -175,14 +235,12 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
   }
 
   getRekapAbsen() async {
-
     setState(() {
       loading = true;
       listRekapAbsen.clear();
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       String tokenAuth = "", hashUser = "";
       tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
       hashUser = (await getPrefrence(HASH_USER))!;
@@ -190,8 +248,8 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
       var param = {
         'token_auth': tokenAuth,
         'hash_user': hashUser,
-        'tahun' : filterTahun,
-        'bulan' : filterBulan,
+        'tahun': filterTahun,
+        'bulan': filterBulan,
       };
 
       http.Response response = await http.post(
@@ -211,17 +269,14 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
         if (jsonResponse.containsKey("error")) {
           Helpers.dialogErrorNetwork(context, jsonResponse["error"]);
         } else {
-
           bool success = jsonResponse['success'];
           // String message = jsonResponse['message'];
           if (success) {
-
             setState(() {
               listRekapAbsen.clear();
             });
 
-            for(int i=0; i<jsonResponse["data"].length; i++){
-
+            for (int i = 0; i < jsonResponse["data"].length; i++) {
               RekapAbsen rekapAbsen = RekapAbsen();
               rekapAbsen.hari = jsonResponse["data"][i]["hari"].toString();
               rekapAbsen.tanggal = jsonResponse["data"][i]["tanggal"].toString();
@@ -272,10 +327,7 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
                 listRekapAbsen.add(rekapAbsen);
               });
             }
-
-          } else {
-
-          }
+          } else {}
         }
       } catch (e, stacktrace) {
         log(e.toString());
@@ -283,7 +335,6 @@ class _PageRekapAbsenHarianState extends State<PageRekapAbsenHarian> {
         String customMessage = "${Strings.TERJADI_KESALAHAN}.\n${e.runtimeType.toString()} ${response.statusCode}";
         Helpers.dialogErrorNetwork(context, customMessage);
       }
-
     } else {
       setState(() {
         loading = false;

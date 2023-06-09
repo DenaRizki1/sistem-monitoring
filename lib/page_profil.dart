@@ -26,7 +26,6 @@ class PageProfil extends StatefulWidget {
 }
 
 class _PageProfilState extends State<PageProfil> {
-
   bool loading = true;
   String nama = "", foto = "";
 
@@ -64,7 +63,7 @@ class _PageProfilState extends State<PageProfil> {
             ),
           ),
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,22 +71,29 @@ class _PageProfilState extends State<PageProfil> {
                   Padding(
                     padding: const EdgeInsets.only(top: 32, bottom: 16),
                     child: Center(
-                      child: foto!="" ? InkWell(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width / 3,
-                          height: MediaQuery.of(context).size.width / 3,
-                          child: CircleAvatar(
-                            child: Padding(
-                              padding: const EdgeInsets.all(1),
-                              child: ClipOval(child: Image.network(foto)),
-                            ),
-                            backgroundColor: Colors.black38,
-                          ),
-                        ),
-                        onTap: () {
-
-                        },
-                      ) : const CupertinoActivityIndicator(),
+                      child: foto != ""
+                          ? InkWell(
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                height: MediaQuery.of(context).size.width / 3,
+                                child: CircleAvatar(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey,
+                                      image: DecorationImage(
+                                        image: Image.network(foto).image,
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.topCenter,
+                                      ),
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.black38,
+                                ),
+                              ),
+                              onTap: () {},
+                            )
+                          : const CupertinoActivityIndicator(),
                     ),
                   ),
                   InkWell(
@@ -96,7 +102,9 @@ class _PageProfilState extends State<PageProfil> {
                       child: Row(
                         children: const [
                           Icon(Icons.person),
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Expanded(child: Text("Info Pribadi")),
                           Icon(Icons.keyboard_arrow_right),
                         ],
@@ -106,14 +114,19 @@ class _PageProfilState extends State<PageProfil> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const PageProfilDetail()));
                     },
                   ),
-                  const Divider(height: 1, color: Colors.black26,),
+                  const Divider(
+                    height: 1,
+                    color: Colors.black26,
+                  ),
                   InkWell(
                     child: Container(
                       padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
                       child: Row(
                         children: const [
                           Icon(Icons.password),
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Expanded(child: Text("Ganti Password")),
                           Icon(Icons.keyboard_arrow_right),
                         ],
@@ -123,31 +136,40 @@ class _PageProfilState extends State<PageProfil> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const PageGantiPassword()));
                     },
                   ),
-                  const Divider(height: 1, color: Colors.black26,),
+                  const Divider(
+                    height: 1,
+                    color: Colors.black26,
+                  ),
                   Container(
                     padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
                     child: InkWell(
-                      child: Row(
-                        children: const [
-                          Icon(Icons.privacy_tip),
-                          SizedBox(width: 10,),
-                          Expanded(child: Text("Kebijakan Privasi")),
-                          Icon(Icons.keyboard_arrow_right),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const PagePrivasi()));
-                      }
-                    ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.privacy_tip),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(child: Text("Kebijakan Privasi")),
+                            Icon(Icons.keyboard_arrow_right),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const PagePrivasi()));
+                        }),
                   ),
-                  const Divider(height: 1, color: Colors.black26,),
+                  const Divider(
+                    height: 1,
+                    color: Colors.black26,
+                  ),
                   InkWell(
                     child: Container(
                       padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
                       child: Row(
                         children: const [
                           Icon(Icons.privacy_tip),
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Expanded(child: Text("Syarat & Ketentuan")),
                           Icon(Icons.keyboard_arrow_right),
                         ],
@@ -157,8 +179,13 @@ class _PageProfilState extends State<PageProfil> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const PageSyaratKetentuan()));
                     },
                   ),
-                  const Divider(height: 1, color: Colors.black26,),
-                  const SizedBox(height: 16,),
+                  const Divider(
+                    height: 1,
+                    color: Colors.black26,
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
                   Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
@@ -214,7 +241,6 @@ class _PageProfilState extends State<PageProfil> {
   }
 
   logout() async {
-
     EasyLoading.show(
       status: "Tunggu sebentar...",
       dismissOnTap: false,
@@ -224,10 +250,8 @@ class _PageProfilState extends State<PageProfil> {
       loading = true;
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       try {
-
         String tokenAuth = "", hashUser = "";
         tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
         hashUser = (await getPrefrence(HASH_USER))!;
@@ -252,15 +276,13 @@ class _PageProfilState extends State<PageProfil> {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         log(jsonResponse.toString());
         if (jsonResponse.containsKey("error")) {
-
         } else {
-
           bool success = jsonResponse['success'];
           String message = jsonResponse["message"];
           if (success) {
             EasyLoading.showSuccess(message);
             clearUserSession();
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageLogin(),), (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageLogin()), (route) => false);
           } else {
             EasyLoading.showError(message);
           }
@@ -272,14 +294,11 @@ class _PageProfilState extends State<PageProfil> {
           loading = false;
         });
       }
-
     } else {
-
       EasyLoading.showError("Tidak ada koneksi internet");
       setState(() {
         loading = false;
       });
     }
   }
-
 }

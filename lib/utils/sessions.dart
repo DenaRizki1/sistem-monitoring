@@ -26,20 +26,15 @@ Future<bool> getPrefrenceBool(String key) async {
 }
 
 Future<void> clearUserSession() async {
-  final waitList = <Future<void>>[];
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  waitList.add(prefs.remove(HASH_USER));
-  waitList.add(prefs.remove(TOKEN_AUTH));
-  waitList.add(prefs.remove(NIK));
-  waitList.add(prefs.remove(NAMA));
-  waitList.add(prefs.remove(EMAIL));
-  waitList.add(prefs.remove(NOTLP));
-  waitList.add(prefs.remove(ALAMAT));
-  waitList.add(prefs.remove(FOTO));
-  waitList.add(prefs.remove(PASSWORD));
-  waitList.add(prefs.remove(TOKEN));
-
-  await prefs.clear();
+  prefs.remove(HASH_USER);
+  prefs.remove(TOKEN_AUTH);
+  prefs.remove(NIK);
+  prefs.remove(NAMA);
+  prefs.remove(EMAIL);
+  prefs.remove(NOTLP);
+  prefs.remove(ALAMAT);
+  prefs.remove(FOTO);
+  prefs.remove(PASSWORD);
 }

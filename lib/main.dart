@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:absentip/services/dependency_injection.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,14 @@ import 'utils/helpers.dart';
 import 'utils/sessions.dart';
 import 'utils/strings.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DependecyInjection.init();
   timeago.setLocaleMessages('id', MyCustomTimeagoMessages());
   runApp(const MyApp());
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -37,17 +42,14 @@ class MyApp extends StatelessWidget {
       statusBarIconBrightness: Brightness.dark,
     ));
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Absen Guru',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           color: colorPrimary,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
-          titleTextStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w400,
-              fontSize: 20,
-              fontFamily: 'PoppinsRegular'),
+          titleTextStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 20, fontFamily: 'PoppinsRegular'),
           centerTitle: false,
           iconTheme: const IconThemeData(color: Colors.black),
           actionsIconTheme: const IconThemeData(color: Colors.black),
@@ -73,7 +75,6 @@ class PageSplashscreen extends StatefulWidget {
 }
 
 class _PageSplashscreenState extends State<PageSplashscreen> {
-
   late PackageInfo packageInfo;
   late bool isLoggedIn;
 
@@ -84,23 +85,15 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
   }
 
   init() async {
-
     Future.delayed(const Duration(seconds: 4), () async {
       packageInfo = await PackageInfo.fromPlatform();
       isLoggedIn = await getPrefrenceBool(ISFIRSTTIME);
       log("isLoggedIn: $isLoggedIn");
 
       if (isLoggedIn) {
-
-        if(await Helpers.isNetworkAvailable()) {
-
+        if (await Helpers.isNetworkAvailable()) {
           DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-          String sumber = '',
-              model = '',
-              token = '404',
-              username = '',
-              password = '',
-              tokenAuth = '';
+          String sumber = '', model = '', token = '404', username = '', password = '', tokenAuth = '';
 
           if (Platform.isAndroid) {
             sumber = 'android';
@@ -131,15 +124,16 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
             'sumber': sumber,
           };
 
-          if(username=='' || password == '') {
-
+          if (username == '' || password == '') {
             // FlutterNativeSplash.remove();
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageLogin(),), (route) => false);
-
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PageLogin(),
+                ),
+                (route) => false);
           } else {
-
             try {
-
               http.Response response = await http.post(
                 Uri.parse(urlLogin),
                 headers: headers,
@@ -157,7 +151,6 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
               if (jsonResponse.containsKey("error")) {
                 Helpers.dialogErrorNetwork(context, jsonResponse["error"]);
               } else {
-
                 bool success = jsonResponse['success'];
                 String message = jsonResponse['message'];
                 if (success) {
@@ -176,22 +169,25 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
                       MaterialPageRoute(
                         builder: (context) => const PageBeranda(),
                       ),
-                          (route) => false);
+                      (route) => false);
                 } else {
-
                   clearUserSession();
                   ArtSweetAlert.show(
                       context: context,
                       artDialogArgs: ArtDialogArgs(
-                        title: 'Gagal',
-                        text: message,
-                        type: ArtSweetAlertType.danger,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: Colors.red,
-                        onConfirm: () {
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageLogin(),), (route) => false);
-                        }
-                      ));
+                          title: 'Gagal',
+                          text: message,
+                          type: ArtSweetAlertType.danger,
+                          confirmButtonText: 'OK',
+                          confirmButtonColor: Colors.red,
+                          onConfirm: () {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PageLogin(),
+                                ),
+                                (route) => false);
+                          }));
                 }
               }
             } catch (e, stacktrace) {
@@ -201,19 +197,21 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
               String customMessage = "${Strings.TERJADI_KESALAHAN}.\n${e.runtimeType.toString()}";
               Helpers.dialogErrorNetwork(context, customMessage);
             }
-
           }
-
         } else {
           // setState(() {
           //   _loginLoading = false;
           // });
           Helpers.dialogErrorNetwork(context, 'Tidak ada koneksi internet');
         }
-
       } else {
         // FlutterNativeSplash.remove();
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageLogin(),), (route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PageLogin(),
+            ),
+            (route) => false);
       }
     });
   }
@@ -226,14 +224,14 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
             width: double.infinity,
             height: double.infinity,
             child:
-            // Lottie.asset(
-            //   'assets/images/splash.json',
-            //   fit: BoxFit.fill,
-            //   onLoaded: (composition) {
-            //     init();
-            //   },
-            // ),
-            Image.asset(
+                // Lottie.asset(
+                //   'assets/images/splash.json',
+                //   fit: BoxFit.fill,
+                //   onLoaded: (composition) {
+                //     init();
+                //   },
+                // ),
+                Image.asset(
               'images/splash.gif',
               gaplessPlayback: true,
               fit: BoxFit.cover,

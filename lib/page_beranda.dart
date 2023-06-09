@@ -27,7 +27,6 @@ class PageBeranda extends StatefulWidget {
 }
 
 class _PageBerandaState extends State<PageBeranda> {
-
   bool loadingJadwalTryOut = true, loadingAbsenHariIni = true, jadwalAbsen = false;
   List<Tryout> list = [];
   String nama = "", foto = "", jamAbsenMasuk = "", jamAbsenPulang = "", keteranganMasuk = "", keteranganPulang = "", pesanKosong = "";
@@ -63,7 +62,8 @@ class _PageBerandaState extends State<PageBeranda> {
         backgroundColor: colorPrimary,
         title: const SizedBox(
           width: double.infinity,
-          child: Text("Beranda",
+          child: Text(
+            "Beranda",
             textAlign: TextAlign.start,
             style: TextStyle(color: Colors.black, overflow: TextOverflow.ellipsis),
           ),
@@ -109,26 +109,43 @@ class _PageBerandaState extends State<PageBeranda> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text("Selamat Datang,", style: TextStyle(color: Colors.black45),),
-                                        Text(nama, style: const TextStyle(fontWeight: FontWeight.bold),),
+                                        const Text(
+                                          "Selamat Datang,",
+                                          style: TextStyle(color: Colors.black45),
+                                        ),
+                                        Text(
+                                          nama,
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                  foto!="" ? InkWell(
-                                    child: CircleAvatar(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(1),
-                                        child: ClipOval(child: Image.network(foto)),
-                                      ),
-                                      backgroundColor: Colors.black38,
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const PageProfil()));
-                                    },
-                                  ) : const CupertinoActivityIndicator(),
+                                  foto != ""
+                                      ? InkWell(
+                                          child: CircleAvatar(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.grey,
+                                                image: DecorationImage(
+                                                  image: Image.network(foto).image,
+                                                  fit: BoxFit.cover,
+                                                  alignment: Alignment.topCenter,
+                                                ),
+                                              ),
+                                            ),
+                                            backgroundColor: Colors.black38,
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => const PageProfil()));
+                                          },
+                                        )
+                                      : const CupertinoActivityIndicator(),
                                 ],
                               ),
-                              const SizedBox(height: 16,),
+                              const SizedBox(
+                                height: 16,
+                              ),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: Center(
@@ -139,34 +156,59 @@ class _PageBerandaState extends State<PageBeranda> {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.end,
                                             children: [
-                                              const Text("Absen Masuk", style: TextStyle(fontSize: 10),),
-                                              const SizedBox(height: 2,),
-                                              !loadingAbsenHariIni ? Text(jamAbsenMasuk,
-                                                textAlign: TextAlign.end,
-                                                style: TextStyle(
-                                                  color: keteranganMasuk=="1" || keteranganMasuk=="2" ? Colors.red : Colors.green,
-                                                  fontSize: jadwalAbsen ? 16 : 12, fontWeight: FontWeight.bold,
-                                                ),
-                                              ) : const CupertinoActivityIndicator(),
+                                              const Text(
+                                                "Absen Masuk",
+                                                style: TextStyle(fontSize: 10),
+                                              ),
+                                              const SizedBox(
+                                                height: 2,
+                                              ),
+                                              !loadingAbsenHariIni
+                                                  ? Text(
+                                                      jamAbsenMasuk,
+                                                      textAlign: TextAlign.end,
+                                                      style: TextStyle(
+                                                        color: keteranganMasuk == "1" || keteranganMasuk == "2" ? Colors.red : Colors.green,
+                                                        fontSize: jadwalAbsen ? 16 : 12,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    )
+                                                  : const CupertinoActivityIndicator(),
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(width: 10,),
-                                        const VerticalDivider(width: 1, color: Colors.black,),
-                                        const SizedBox(width: 10,),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        const VerticalDivider(
+                                          width: 1,
+                                          color: Colors.black,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              const Text("Absen Pulang", style: TextStyle(fontSize: 10),),
-                                              const SizedBox(height: 2,),
-                                              !loadingAbsenHariIni ? Text(jamAbsenPulang,
-                                                textAlign: TextAlign.start,
-                                                style: TextStyle(
-                                                  color: keteranganPulang=="1" || keteranganPulang=="2" ? Colors.red : Colors.green,
-                                                  fontSize: jadwalAbsen ? 16 : 12, fontWeight: FontWeight.bold,
-                                                ),
-                                              ) : const CupertinoActivityIndicator(),
+                                              const Text(
+                                                "Absen Pulang",
+                                                style: TextStyle(fontSize: 10),
+                                              ),
+                                              const SizedBox(
+                                                height: 2,
+                                              ),
+                                              !loadingAbsenHariIni
+                                                  ? Text(
+                                                      jamAbsenPulang,
+                                                      textAlign: TextAlign.start,
+                                                      style: TextStyle(
+                                                        color: keteranganPulang == "1" || keteranganPulang == "2" ? Colors.red : Colors.green,
+                                                        fontSize: jadwalAbsen ? 16 : 12,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    )
+                                                  : const CupertinoActivityIndicator(),
                                             ],
                                           ),
                                         ),
@@ -180,49 +222,65 @@ class _PageBerandaState extends State<PageBeranda> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Container(
                       margin: const EdgeInsets.only(left: 16, right: 16, bottom: 5),
                       child: !loadingJadwalTryOut
-                          ?
-                      const Text("Jadwal Tryout Anda", style: TextStyle(fontWeight: FontWeight.bold),)
-                          :
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: const [
-                          Text("Jadwal Tryout Anda", style: TextStyle(fontWeight: FontWeight.bold),),
-                          SizedBox(width: 5,),
-                          CupertinoActivityIndicator(),
-                          Expanded(
-                            child: SizedBox(),
-                          ),
-                        ],
-                      ),
+                          ? const Text(
+                              "Jadwal Tryout Anda",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "Jadwal Tryout Anda",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                CupertinoActivityIndicator(),
+                                Expanded(
+                                  child: SizedBox(),
+                                ),
+                              ],
+                            ),
                     ),
-                    !loadingJadwalTryOut ? (list.isNotEmpty ? ExpandablePageView.builder(
-                      controller: PageController(viewportFraction: 0.9),
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        return widgetItemTryout(context, list[index]);
-                      },
-                    ) : Container(
-                      margin: const EdgeInsets.only(left: 16, right: 16),
-                      width: MediaQuery.of(context).size.width,
-                      child: Card(
-                        color: colorInfo,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(pesanKosong, style: const TextStyle(fontSize: 12),),
-                        ),
-                      ),
-                    )) : const SizedBox(),
-                    const SizedBox(height: 16,),
+                    !loadingJadwalTryOut
+                        ? (list.isNotEmpty
+                            ? ExpandablePageView.builder(
+                                controller: PageController(viewportFraction: 0.9),
+                                itemCount: list.length,
+                                itemBuilder: (context, index) {
+                                  return widgetItemTryout(context, list[index]);
+                                },
+                              )
+                            : Container(
+                                margin: const EdgeInsets.only(left: 16, right: 16),
+                                width: MediaQuery.of(context).size.width,
+                                child: Card(
+                                  color: colorInfo,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      pesanKosong,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                              ))
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 16,
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.only(left: 16, right: 16),
-                      child:
-                      Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
@@ -240,8 +298,14 @@ class _PageBerandaState extends State<PageBeranda> {
                                         height: 50,
                                         fit: BoxFit.cover,
                                       ),
-                                      const SizedBox(height: 10,),
-                                      const Text("Absen Harian\n", maxLines: 2, textAlign: TextAlign.center,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Text(
+                                        "Absen Harian\n",
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -259,8 +323,14 @@ class _PageBerandaState extends State<PageBeranda> {
                                         height: 50,
                                         fit: BoxFit.cover,
                                       ),
-                                      const SizedBox(height: 10,),
-                                      const Text("Rekap Absen\n", maxLines: 2, textAlign: TextAlign.center,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Text(
+                                        "Rekap Absen\n",
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -268,7 +338,12 @@ class _PageBerandaState extends State<PageBeranda> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PageListTryout(jenisTryout: JenisTryout.jasmani,)));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const PageListTryout(
+                                                  jenisTryout: JenisTryout.jasmani,
+                                                )));
                                   },
                                   child: Column(
                                     children: [
@@ -278,8 +353,14 @@ class _PageBerandaState extends State<PageBeranda> {
                                         height: 50,
                                         fit: BoxFit.cover,
                                       ),
-                                      const SizedBox(height: 10,),
-                                      const Text("Jasmani\n", maxLines: 2, textAlign: TextAlign.center,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Text(
+                                        "Jasmani\n",
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -287,7 +368,12 @@ class _PageBerandaState extends State<PageBeranda> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PageListTryout(jenisTryout: JenisTryout.akademik,)));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const PageListTryout(
+                                                  jenisTryout: JenisTryout.akademik,
+                                                )));
                                   },
                                   child: Column(
                                     children: [
@@ -297,21 +383,34 @@ class _PageBerandaState extends State<PageBeranda> {
                                         height: 50,
                                         fit: BoxFit.cover,
                                       ),
-                                      const SizedBox(height: 10,),
-                                      const Text("Akademik\n", maxLines: 2, textAlign: TextAlign.center,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Text(
+                                        "Akademik\n",
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Row(
                             children: [
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PageListTryout(jenisTryout: JenisTryout.psikologi,)));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const PageListTryout(
+                                                  jenisTryout: JenisTryout.psikologi,
+                                                )));
                                   },
                                   child: Column(
                                     children: [
@@ -321,13 +420,22 @@ class _PageBerandaState extends State<PageBeranda> {
                                         height: 50,
                                         fit: BoxFit.cover,
                                       ),
-                                      const SizedBox(height: 10,),
-                                      const Text("Psikologi\n", maxLines: 2, textAlign: TextAlign.center,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Text(
+                                        "Psikologi\n",
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
-                              const Expanded(flex: 3, child: SizedBox(),),
+                              const Expanded(
+                                flex: 3,
+                                child: SizedBox(),
+                              ),
                             ],
                           ),
                         ],
@@ -344,7 +452,6 @@ class _PageBerandaState extends State<PageBeranda> {
   }
 
   Widget widgetMenuItem(String icon, String label) {
-
     return Column(
       children: [
         Image.asset(
@@ -353,23 +460,25 @@ class _PageBerandaState extends State<PageBeranda> {
           height: 50,
           fit: BoxFit.cover,
         ),
-        const SizedBox(height: 10,),
-        Text(label, maxLines: 2, textAlign: TextAlign.center,),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          label,
+          maxLines: 2,
+          textAlign: TextAlign.center,
+        ),
       ],
     );
-
   }
 
   getAbsenHariIni() async {
-
     setState(() {
       loadingAbsenHariIni = true;
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       try {
-
         String tokenAuth = "", hashUser = "";
         tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
         hashUser = (await getPrefrence(HASH_USER))!;
@@ -394,21 +503,19 @@ class _PageBerandaState extends State<PageBeranda> {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         log(jsonResponse.toString());
         if (jsonResponse.containsKey("error")) {
-
         } else {
-
           bool success = jsonResponse['success'];
           if (success) {
             setState(() {
               jadwalAbsen = true;
-              if(jsonResponse['absenMasuk'].toString().toLowerCase()!="null") {
+              if (jsonResponse['absenMasuk'].toString().toLowerCase() != "null") {
                 jamAbsenMasuk = jsonResponse["absenMasuk"]["jam_absen"].toString();
                 keteranganMasuk = jsonResponse["absenMasuk"]["keterangan"].toString();
               } else {
                 jamAbsenMasuk = "-";
                 keteranganMasuk = "";
               }
-              if(jsonResponse['absenPulang'].toString().toLowerCase()!="null") {
+              if (jsonResponse['absenPulang'].toString().toLowerCase() != "null") {
                 jamAbsenPulang = jsonResponse["absenPulang"]["jam_absen"].toString();
                 keteranganPulang = jsonResponse["absenPulang"]["keterangan"].toString();
               } else {
@@ -432,9 +539,7 @@ class _PageBerandaState extends State<PageBeranda> {
           loadingAbsenHariIni = false;
         });
       }
-
     } else {
-
       setState(() {
         loadingAbsenHariIni = false;
       });
@@ -442,16 +547,13 @@ class _PageBerandaState extends State<PageBeranda> {
   }
 
   getListTryoutHariIni() async {
-
     setState(() {
       loadingJadwalTryOut = true;
       list.clear();
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       try {
-
         String email = "", tokenAuth = "", hashUser = "";
         email = (await getPrefrence(EMAIL))!;
         tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
@@ -478,19 +580,15 @@ class _PageBerandaState extends State<PageBeranda> {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         log(jsonResponse.toString());
         if (jsonResponse.containsKey("error")) {
-
         } else {
-
           bool success = jsonResponse['success'];
           String message = jsonResponse["message"];
           if (success) {
-
             setState(() {
               list.clear();
             });
 
-            for(int i=0; i<jsonResponse["data"].length; i++){
-
+            for (int i = 0; i < jsonResponse["data"].length; i++) {
               Tryout tryout = Tryout();
               tryout.jenisTryout = jsonResponse["data"][i]["jenis_tryout"].toString();
               tryout.idTryout = jsonResponse["data"][i]["id_tryout"].toString();
@@ -522,14 +620,11 @@ class _PageBerandaState extends State<PageBeranda> {
           pesanKosong = e.toString();
         });
       }
-
     } else {
-
       setState(() {
         loadingJadwalTryOut = false;
         pesanKosong = "Tidak ada koneksi internet";
       });
     }
   }
-
 }

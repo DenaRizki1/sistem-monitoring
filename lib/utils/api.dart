@@ -2,14 +2,12 @@ import 'dart:convert';
 
 const String baseUrl = 'https://apps.tacticalinpolice.com/api_guru';
 
-final String basicAuth = 'Basic ' +
-    base64Encode(
-        utf8.encode('4p1k3yr3st4T1PPppPPpp:88d19af4acfa4d8aad5d4eb496b520b2'));
+final String basicAuth = 'Basic ' + base64Encode(utf8.encode('4p1k3yr3st4T1PPppPPpp:88d19af4acfa4d8aad5d4eb496b520b2'));
 final headers = <String, String>{'authorization': basicAuth};
 
 const int timeOut = 50;
 
-const String urlLogin = '$baseUrl/auth_guru/login';
+const String urlLogin = '$baseUrl/auth_guru/loginV2';
 const String urlLogout = '$baseUrl/auth_guru/logoutAuth';
 const String urlUbahPassword = '$baseUrl/auth_guru/ubahPassword';
 const String urlListTryoutHariIni = '$baseUrl/beranda/tryout_hariini';

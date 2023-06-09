@@ -29,6 +29,49 @@
             {
               "client_id": "481668129824-q5ig7tkepu3e8b37emhacmv7jo76qc3c.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "481668129824-jtl7muhaa895i3etmodu88fb2n8qitom.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mitraTip"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481668129824:android:bdcff87999f33633b6c845",
+        "android_client_info": {
+          "package_name": "com.appdev.mitra_tip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "481668129824-q5ig7tkepu3e8b37emhacmv7jo76qc3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIgD-uD0kYKd2OoPpeT-bljh3z-J-xZxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "481668129824-q5ig7tkepu3e8b37emhacmv7jo76qc3c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "481668129824-jtl7muhaa895i3etmodu88fb2n8qitom.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mitraTip"
+              }
             }
           ]
         }
