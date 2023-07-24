@@ -1,3 +1,46 @@
 {
-  "java.configuration.updateBuildConfiguration": "disabled"
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Current Device",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "RMX1971",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "1c27b5a"
+    },
+    {
+      "name": "SM_G9350_network",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "192.168.10.17:5555"
+    },
+    {
+      "name": "SM_G9350",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "c01dd308"
+    },
+    // {
+    //     "name": "SM_A146P",
+    //     "request": "launch",
+    //     "type": "dart",
+    //     "deviceId": "R9CW404TTAL"
+    // },
+  ],
+  "compounds": [
+    {
+      "name": "All Devices",
+      "configurations": [
+        "RMX1971",
+        "SM_G9350",
+        "SM_G9350_network",
+        // "SM_A146P"
+      ],
+    }
+  ],
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
