@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/widgets.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'model/tryout.dart';
 import 'my_colors.dart';
@@ -18,7 +20,6 @@ import 'utils/sessions.dart';
 import 'utils/strings.dart';
 
 class PageListTryout extends StatefulWidget {
-
   final String jenisTryout;
   const PageListTryout({Key? key, required this.jenisTryout}) : super(key: key);
 
@@ -27,7 +28,6 @@ class PageListTryout extends StatefulWidget {
 }
 
 class _PageListTryoutState extends State<PageListTryout> {
-
   bool loading = true;
   List<Tryout> list = [];
   String filterTanggal = "", valueTanggal = "";
@@ -48,27 +48,74 @@ class _PageListTryoutState extends State<PageListTryout> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const Image(
+          image: AssetImage(AppImages.bg2),
+          fit: BoxFit.cover,
+        ),
+        centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         backgroundColor: colorPrimary,
-        title: SizedBox(
-          width: double.infinity,
-          child: Text("Tryout ${toBeginningOfSentenceCase(widget.jenisTryout)}",
-            textAlign: TextAlign.start,
-            style: const TextStyle(
-                color: Colors.black, overflow: TextOverflow.ellipsis),
+        leading: GestureDetector(
+          // onTap: () => AppNavigator.instance.pop(),
+          onTap: () => Navigator.of(context, rootNavigator: true).pop(),
+          child: Container(
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(3, 3),
+                  blurRadius: 3,
+                ),
+              ],
+            ),
+            // decoration: BoxDecoration(
+            //   color: Colors.white.withOpacity(0.2),
+            //   borderRadius: BorderRadius.circular(6),
+            // ),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: colorPrimary,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Center(
+                child: Icon(
+                  MdiIcons.chevronLeft,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
           ),
         ),
-        // actions: <Widget>[
-        //   IconButton(
-        //     icon: const Icon(Icons.search),
-        //     onPressed: () {
-        //
-        //     },
-        //   )
-        // ],
+        title: SizedBox(
+          // width: double.infinity,
+          child: Text(
+            "Tryout ${toBeginningOfSentenceCase(widget.jenisTryout)}",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              color: Colors.black,
+              overflow: TextOverflow.ellipsis,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        actions: <Widget>[
+          // IconButton(
+          //   icon: const Icon(Icons.calendar_today_rounded),
+          //   onPressed: () {
+          //     Navigator.push(context, MaterialPageRoute(builder: (context) => const PageRekapAbsenHarian()));
+          //   },
+          // )
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
@@ -84,13 +131,22 @@ class _PageListTryoutState extends State<PageListTryout> {
                 // colorBlendMode: BlendMode.modulate,
               ),
             ),
-            !loading ? (list.isEmpty ? SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: const Center(
-                child: Text("Data tidak ditemukan", textAlign: TextAlign.center,),
-              ),
-            ) : const SizedBox()) : const Center(child: CupertinoActivityIndicator(),),
+            !loading
+                ? (list.isEmpty
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: const Center(
+                          child: Text(
+                            "Data tidak ditemukan",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : const SizedBox())
+                : const Center(
+                    child: CupertinoActivityIndicator(),
+                  ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -104,7 +160,9 @@ class _PageListTryoutState extends State<PageListTryout> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.calendar_today_rounded),
-                          const SizedBox(width: 10,),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           Expanded(
                             child: DateTimePicker(
                               type: DateTimePickerType.date,
@@ -133,14 +191,21 @@ class _PageListTryoutState extends State<PageListTryout> {
                     ),
                   ),
                 ),
-                const Divider(height: 1, color: Colors.black54,),
+                // const Divider(height: 1, color: Colors.black54,),
                 Expanded(
                   child: ListView.separated(
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: list.length,
-                    itemBuilder: (context, index) => Container(
-                      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                      child: widgetItemTryout(context, list[index]),
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 3,
+                        margin: const EdgeInsets.only(top: 12),
+                        child: widgetItemTryout(context, list[index]),
+                      ),
                     ),
                     separatorBuilder: (BuildContext context, int index) => const Divider(height: 0),
                   ),
@@ -154,14 +219,12 @@ class _PageListTryoutState extends State<PageListTryout> {
   }
 
   getListTryout() async {
-
     setState(() {
       loading = true;
       list.clear();
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       String email = "", tokenAuth = "", hashUser = "";
       email = (await getPrefrence(EMAIL))!;
       tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
@@ -171,11 +234,11 @@ class _PageListTryoutState extends State<PageListTryout> {
         'username': email,
         'token_auth': tokenAuth,
         'hash_user': hashUser,
-        'filter[tanggal]' : filterTanggal,
+        'filter[tanggal]': filterTanggal,
       };
 
       String url = "";
-      switch(widget.jenisTryout) {
+      switch (widget.jenisTryout) {
         case JenisTryout.jasmani:
           url = urlListTryoutJasmaniByPengajar;
           break;
@@ -204,17 +267,14 @@ class _PageListTryoutState extends State<PageListTryout> {
         if (jsonResponse.containsKey("error")) {
           Helpers.dialogErrorNetwork(context, jsonResponse["error"]);
         } else {
-
           bool success = jsonResponse['success'];
           // String message = jsonResponse['message'];
           if (success) {
-
             setState(() {
               list.clear();
             });
 
-            for(int i=0; i<jsonResponse["data"].length; i++){
-
+            for (int i = 0; i < jsonResponse["data"].length; i++) {
               Tryout tryout = Tryout();
               tryout.jenisTryout = widget.jenisTryout;
               tryout.idTryout = jsonResponse["data"][i]["id_tryout"].toString();
@@ -232,12 +292,8 @@ class _PageListTryoutState extends State<PageListTryout> {
               setState(() {
                 list.add(tryout);
               });
-
             }
-
-          } else {
-
-          }
+          } else {}
         }
       } catch (e, stacktrace) {
         log(e.toString());
@@ -245,7 +301,6 @@ class _PageListTryoutState extends State<PageListTryout> {
         String customMessage = "${Strings.TERJADI_KESALAHAN}.\n${e.runtimeType.toString()} ${response.statusCode}";
         Helpers.dialogErrorNetwork(context, customMessage);
       }
-
     } else {
       setState(() {
         loading = false;

@@ -3,21 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class MyAppBar {
-
   static getAppBar(String _title) {
     return AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        backgroundColor: colorPrimary,
-        leading: const BackButton(
-          color: Colors.black,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      backgroundColor: colorPrimary,
+      leading: const BackButton(
+        color: Colors.black,
+      ),
+      centerTitle: true,
+      title: SizedBox(
+        width: double.infinity,
+        child: Text(
+          _title,
+          textAlign: TextAlign.start,
+          style: const TextStyle(color: Colors.black, overflow: TextOverflow.ellipsis),
         ),
-        title: SizedBox(
-          width: double.infinity,
-          child: Text(_title,
-            textAlign: TextAlign.start,
-            style: const TextStyle(color: Colors.black, overflow: TextOverflow.ellipsis),
-          ),
-        ),
+      ),
     );
   }
 
@@ -39,8 +40,7 @@ class MyAppBar {
           icon: _icon,
           color: Colors.grey,
           tooltip: 'Cari Menu',
-          onPressed: () {
-          },
+          onPressed: () {},
         ),
       ],
     );

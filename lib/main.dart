@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:absentip/data/apis/api_connect.dart';
+import 'package:absentip/data/apis/end_point.dart';
+import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/data/provider/main_provider.dart';
 import 'package:absentip/services/dependency_injection.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -9,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:http/http.dart' as http;
 
@@ -26,7 +31,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DependecyInjection.init();
   timeago.setLocaleMessages('id', MyCustomTimeagoMessages());
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MainProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -57,6 +71,14 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         scaffoldBackgroundColor: Colors.white,
         fontFamily: 'PoppinsRegular',
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colorPrimary,
+            foregroundColor: Colors.white,
+            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
       ),
       builder: EasyLoading.init(),
       initialRoute: '/',
@@ -134,19 +156,25 @@ class _PageSplashscreenState extends State<PageSplashscreen> {
                 (route) => false);
           } else {
             try {
-              http.Response response = await http.post(
-                Uri.parse(urlLogin),
-                headers: headers,
-                body: param,
+              // http.Response response = await http.post(
+              //   Uri.parse(urlLogin),
+              //   headers: headers,
+              //   body: param,
+              // );
+
+              final response = await ApiConnect.instance.request(
+                requestMethod: RequestMethod.post,
+                url: EndPoint.urlLogin,
+                params: param,
               );
 
               // setState(() {
               //   loading = false;
               // });
               // FlutterNativeSplash.remove();
-              log(response.body);
+              log(response.toString());
 
-              Map<String, dynamic> jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+              Map<String, dynamic> jsonResponse = response!;
               log(jsonResponse.toString());
               if (jsonResponse.containsKey("error")) {
                 Helpers.dialogErrorNetwork(context, jsonResponse["error"]);

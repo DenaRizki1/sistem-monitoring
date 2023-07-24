@@ -1,15 +1,212 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
+import 'package:absentip/my_colors.dart';
+import 'package:absentip/utils/text_montserrat.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutx/flutx.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_downloader/image_downloader.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity/connectivity.dart';
+
+String parseDateInd(String? input, String format) {
+  //? exp format 'EEE dd MMMM yyyy HH:mm'
+  try {
+    initializeDateFormatting();
+    if (input!.isEmpty || input == "-") {
+      return "-";
+    } else {
+      final dateTime = DateTime.parse(input);
+      final dateIndo = DateFormat(format, "id_ID").format(dateTime);
+      return dateIndo;
+    }
+  } catch (e) {
+    return input?.toString() ?? "-";
+  }
+}
+
+double safetyParseDouble(String input) {
+  try {
+    return double.tryParse(input) ?? 0.0;
+  } catch (e) {
+    log(e.toString());
+    return 0.0;
+  }
+}
+
+int safetyParseInt(String input) {
+  try {
+    return int.tryParse(input) ?? 0;
+  } catch (e) {
+    log(e.toString());
+    return 0;
+  }
+}
+
+DateTime safetyParseDatetime(String input) {
+  try {
+    return DateTime.parse(input);
+  } catch (e) {
+    return DateTime.now();
+  }
+}
+
+void showToast(String message) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+  );
+}
+
+void showDialogOpenGps(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FxText.titleLarge("Informasi", fontWeight: 600),
+          const Divider(),
+          const SizedBox(height: 10),
+          const Text('Membuat tiket visit membutuhkan akses lokasi, aktifkan sekarang?'),
+        ],
+      ),
+      actions: <Widget>[
+        FxButton.text(
+          onPressed: () {
+            Navigator.canPop(context);
+          },
+          child: FxText.bodyMedium("Tidak", fontWeight: 600, color: colorPrimary),
+        ),
+        FxButton(
+          backgroundColor: colorPrimary,
+          borderRadiusAll: 4,
+          elevation: 0,
+          onPressed: () async {
+            Navigator.pop(context);
+            await Geolocator.openLocationSettings();
+          },
+          child: FxText.bodyMedium("Ya", fontWeight: 600, color: colorPrimary),
+        ),
+      ],
+    ),
+  );
+}
+
+void showDialogOpenSettingPermission(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FxText.titleLarge("Informasi", fontWeight: 600),
+          const Divider(),
+          const SizedBox(height: 10),
+          const Text('Membuat tiket visit membutuhkan izin akses lokasi, aktifkan sekarang?'),
+        ],
+      ),
+      actions: <Widget>[
+        FxButton.text(
+          onPressed: () {
+            Navigator.canPop(context);
+          },
+          child: FxText.bodyMedium("Tidak", fontWeight: 600, color: colorPrimary),
+        ),
+        FxButton(
+          backgroundColor: colorPrimary,
+          borderRadiusAll: 4,
+          elevation: 0,
+          onPressed: () async {
+            Navigator.pop(context);
+            await Geolocator.openLocationSettings();
+          },
+          child: FxText.bodyMedium("Ya", fontWeight: 600, color: colorPrimary),
+        ),
+      ],
+    ),
+  );
+}
+
+alertOpenSetting(BuildContext context, {String message = "Aplikasi memerlukan beberapa izin untuk dapat berjalan dengan baik. Apakah anda ingin mengaktifkannya?"}) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FxText.titleLarge("Perhatian!", fontWeight: 600),
+          const Divider(),
+          const SizedBox(height: 10),
+          Text(message),
+        ],
+      ),
+      actions: <Widget>[
+        FxButton.text(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: FxText.bodyMedium("Batal", fontWeight: 600, color: colorPrimary),
+        ),
+        FxButton(
+          backgroundColor: colorPrimary,
+          borderRadiusAll: 4,
+          elevation: 0,
+          onPressed: () async {
+            Navigator.pop(context);
+            await openAppSettings();
+          },
+          child: FxText.bodyMedium("Pengaturan", fontWeight: 600, color: colorPrimary),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget loadingWidget({double size = 40}) {
+  return Center(
+    child: LoadingAnimationWidget.fourRotatingDots(
+      color: Colors.black,
+      size: size,
+    ),
+  );
+}
+
+Future<void> showLoading({String message = "Tunggu sebentar..."}) async {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..textColor = Colors.red
+    ..loadingStyle = EasyLoadingStyle.custom //This was missing in earlier code
+    ..indicatorColor = Colors.transparent
+    ..backgroundColor = Colors.black54
+    ..boxShadow = <BoxShadow>[]
+    ..indicatorWidget = LoadingAnimationWidget.inkDrop(
+      color: Colors.red,
+      size: 40,
+    );
+  await EasyLoading.show(status: message, maskType: EasyLoadingMaskType.black, dismissOnTap: true);
+}
+
+Future<void> dismissLoading() async {
+  if (EasyLoading.isShow) {
+    await EasyLoading.dismiss();
+  } else {
+    return;
+  }
+}
 
 class Helpers {
   static defaultAppBar(BuildContext context, String tittle) {
@@ -69,8 +266,7 @@ class Helpers {
     );
   }
 
-  static getDateTimeNow(
-      bool hari, bool tgl, bool bulan, bool tahun, bool waktu) {
+  static getDateTimeNow(bool hari, bool tgl, bool bulan, bool tahun, bool waktu) {
     DateTime today = new DateTime.now();
     var month;
     switch (today.month) {
@@ -136,12 +332,7 @@ class Helpers {
         break;
     }
 
-    var data,
-        tempHari = '',
-        tempTgl = '',
-        tempBulan = '',
-        tempTahun = '',
-        tempWaktu = '';
+    var data, tempHari = '', tempTgl = '', tempBulan = '', tempTahun = '', tempWaktu = '';
 
     if (tahun) {
       tempTahun = today.year.toString();
@@ -314,8 +505,7 @@ class Helpers {
     return '$month ${tm.year}';
   }
 
-  static Future imageSelector(
-      BuildContext context, ImagePicker _picker, String pickerType) async {
+  static Future imageSelector(BuildContext context, ImagePicker _picker, String pickerType) async {
     XFile? imageFile = null;
     // File file;
 
@@ -327,11 +517,7 @@ class Helpers {
         break;
 
       case "kamera": // CAMERA CAPTURE CODE
-        imageFile = await _picker.pickImage(
-            source: ImageSource.camera,
-            imageQuality: 80,
-            maxHeight: 852,
-            maxWidth: 450);
+        imageFile = await _picker.pickImage(source: ImageSource.camera, imageQuality: 80, maxHeight: 852, maxWidth: 450);
         break;
     }
 
@@ -420,8 +606,7 @@ class Helpers {
     }
   }
 
-  static Future dialogErrorNetworkNoFinish(
-      BuildContext context, String message) async {
+  static Future dialogErrorNetworkNoFinish(BuildContext context, String message) async {
     ArtDialogResponse response = await ArtSweetAlert.show(
         barrierDismissible: false,
         context: context,
@@ -472,7 +657,7 @@ class Helpers {
     return Colors.white;
   }
 
-  static MaterialColor getBaseColor(){
+  static MaterialColor getBaseColor() {
     const Map<int, Color> color = {
       50: Color.fromRGBO(0, 0, 0, .0),
       100: Color.fromRGBO(0, 0, 0, .0),

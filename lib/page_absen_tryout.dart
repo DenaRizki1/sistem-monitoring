@@ -10,7 +10,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +21,6 @@ import 'utils/sessions.dart';
 import 'utils/strings.dart';
 
 class PageAbsenTryout extends StatefulWidget {
-
   final Tryout tryout;
   const PageAbsenTryout({Key? key, required this.tryout}) : super(key: key);
 
@@ -31,13 +29,12 @@ class PageAbsenTryout extends StatefulWidget {
 }
 
 class _PageAbsenTryoutState extends State<PageAbsenTryout> {
-
   final Completer<GoogleMapController> _controller = Completer();
   Set<Marker> markers = {};
-  Location location = Location();
+  // Location location = Location();
   bool statusTombolAbsen = false;
   late bool _serviceEnabled;
-  late PermissionStatus _permissionGranted;
+  // late PermissionStatus _permissionGranted;
   double latitude = 0.0, longitude = 0.0;
   final ImagePicker _picker = ImagePicker();
   XFile? fileFoto;
@@ -69,10 +66,12 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
         backgroundColor: colorPrimary,
         title: SizedBox(
           width: double.infinity,
-          child: Text("Absen Tryout ${toBeginningOfSentenceCase(widget.tryout.jenisTryout)}",
+          child: Text(
+            "Absen Tryout ${toBeginningOfSentenceCase(widget.tryout.jenisTryout)}",
             textAlign: TextAlign.start,
             style: const TextStyle(
-              color: Colors.black, overflow: TextOverflow.ellipsis,
+              color: Colors.black,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -110,7 +109,10 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
                               color: Colors.grey,
                               child: GoogleMap(
                                 mapType: MapType.normal,
-                                initialCameraPosition: CameraPosition(target: LatLng(latitude, longitude), zoom: 14.4746,),
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(latitude, longitude),
+                                  zoom: 14.4746,
+                                ),
                                 myLocationEnabled: true,
                                 myLocationButtonEnabled: true,
                                 zoomControlsEnabled: true,
@@ -119,96 +121,111 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
                                 trafficEnabled: false,
                                 rotateGesturesEnabled: false,
                                 onMapCreated: (GoogleMapController controller) {
-                                  if(!_controller.isCompleted) _controller.complete(controller);
+                                  if (!_controller.isCompleted) _controller.complete(controller);
                                 },
                                 markers: markers,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16,),
+                          const SizedBox(
+                            height: 16,
+                          ),
                           Row(
                             children: [
                               Expanded(
                                 child: ElevatedButton.icon(
                                   icon: !statusTombolAbsen ? const CupertinoActivityIndicator() : const SizedBox(),
-                                  label: const Text("Absen",),
+                                  label: const Text(
+                                    "Absen",
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     primary: statusTombolAbsen ? Colors.blue : Colors.grey,
                                   ),
-                                  onPressed: statusTombolAbsen ? () {
-                                    showBarModalBottomSheet(
-                                      context: context,
-                                      builder: (context) => Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ListTile(
-                                            title: const Text('Scan QR Code'),
-                                            leading: const Icon(Icons.qr_code),
-                                            onTap: (){
-                                              Navigator.of(context).pop();
-                                              showDialog<void>(
-                                                context: context,
-                                                barrierDismissible: false, // user must tap button!
-                                                builder: (BuildContext context) {
-                                                  return Container(
-                                                    height: MediaQuery.of(context).size.height,
-                                                    width: MediaQuery.of(context).size.width,
-                                                    color: Colors.white,
-                                                    child: Column(
-                                                      children: [
-                                                        Expanded(
-                                                          child: MobileScanner(
-                                                            controller: MobileScannerController(facing: CameraFacing.back,),
-                                                            allowDuplicates: false,
-                                                            onDetect: (barcode, args) {
-                                                              Navigator.pop(context);
-                                                              if (barcode.rawValue == null) {
-                                                                debugPrint('Failed to scan Barcode');
-                                                                Helpers.showToast("Gagal scan");
-                                                              } else {
-                                                                final String code = barcode.rawValue!;
-                                                                debugPrint('Barcode found! $code');
-                                                                absen(code);
-                                                              }
-                                                            },
-                                                          ),
-                                                        ),
-                                                        InkWell(
-                                                          child: Container(
-                                                            padding: EdgeInsets.all(20),
-                                                            child: Icon(Icons.close, color: Colors.red,),
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.pop(context);
-                                                          },
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          ),
-                                          ListTile(
-                                            title: const Text('Ambil Foto'),
-                                            leading: const Icon(Icons.camera_alt_outlined),
-                                            onTap: () async {
-                                              Navigator.of(context).pop();
-                                              setState(() async {
-                                                fileFoto = await _picker.pickImage(source: ImageSource.camera, imageQuality: 50,);
-                                                if(fileFoto!=null) {
-                                                  absen(widget.tryout.kdTryout);
-                                                }
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  } : null,
+                                  onPressed: statusTombolAbsen
+                                      ? () {
+                                          showBarModalBottomSheet(
+                                            context: context,
+                                            builder: (context) => Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                ListTile(
+                                                    title: const Text('Scan QR Code'),
+                                                    leading: const Icon(Icons.qr_code),
+                                                    onTap: () {
+                                                      Navigator.of(context).pop();
+                                                      showDialog<void>(
+                                                        context: context,
+                                                        barrierDismissible: false, // user must tap button!
+                                                        builder: (BuildContext context) {
+                                                          return Container(
+                                                            height: MediaQuery.of(context).size.height,
+                                                            width: MediaQuery.of(context).size.width,
+                                                            color: Colors.white,
+                                                            child: Column(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: MobileScanner(
+                                                                    controller: MobileScannerController(
+                                                                      facing: CameraFacing.back,
+                                                                    ),
+                                                                    allowDuplicates: false,
+                                                                    onDetect: (barcode, args) {
+                                                                      Navigator.pop(context);
+                                                                      if (barcode.rawValue == null) {
+                                                                        debugPrint('Failed to scan Barcode');
+                                                                        Helpers.showToast("Gagal scan");
+                                                                      } else {
+                                                                        final String code = barcode.rawValue!;
+                                                                        debugPrint('Barcode found! $code');
+                                                                        absen(code);
+                                                                      }
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                                InkWell(
+                                                                  child: Container(
+                                                                    padding: EdgeInsets.all(20),
+                                                                    child: Icon(
+                                                                      Icons.close,
+                                                                      color: Colors.red,
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    }),
+                                                ListTile(
+                                                  title: const Text('Ambil Foto'),
+                                                  leading: const Icon(Icons.camera_alt_outlined),
+                                                  onTap: () async {
+                                                    Navigator.of(context).pop();
+                                                    setState(() async {
+                                                      fileFoto = await _picker.pickImage(
+                                                        source: ImageSource.camera,
+                                                        imageQuality: 50,
+                                                      );
+                                                      if (fileFoto != null) {
+                                                        absen(widget.tryout.kdTryout);
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      : null,
                                 ),
                               ),
-                              const SizedBox(width: 10,),
+                              const SizedBox(
+                                width: 10,
+                              ),
                               ElevatedButton(
                                 onPressed: () {
                                   getAbsen();
@@ -231,30 +248,23 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
   }
 
   getAbsen() async {
-
     setState(() {
       statusTombolAbsen = false;
     });
 
-    if(await Helpers.isNetworkAvailable()) {
-
+    if (await Helpers.isNetworkAvailable()) {
       try {
-
         String tokenAuth = "", hashUser = "";
         tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
         hashUser = (await getPrefrence(HASH_USER))!;
 
-        var param = {
-          'token_auth': tokenAuth,
-          'hash_user': hashUser,
-          'kd_tryout': widget.tryout.kdTryout
-        };
+        var param = {'token_auth': tokenAuth, 'hash_user': hashUser, 'kd_tryout': widget.tryout.kdTryout};
 
         log("jenisTryout:${widget.tryout.jenisTryout}");
         log("jenisTryout:${JenisTryout.jasmani}");
 
         String url = "";
-        switch(widget.tryout.jenisTryout) {
+        switch (widget.tryout.jenisTryout) {
           case JenisTryout.jasmani:
             url = urlGetAbsenTryoutJasmani;
             break;
@@ -279,41 +289,35 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         log(jsonResponse.toString());
         if (jsonResponse.containsKey("error")) {
-
         } else {
-
           bool success = jsonResponse['success'];
           if (success) {
-            setState(() {
-
-
-
-            });
-
+            setState(() {});
           } else {
+            // _serviceEnabled = await location.serviceEnabled();
+            // if (!_serviceEnabled) {
+            //   _serviceEnabled = await location.requestService();
+            //   if (!_serviceEnabled) {
+            //     return;
+            //   }
+            // }
 
-            _serviceEnabled = await location.serviceEnabled();
-            if (!_serviceEnabled) {
-              _serviceEnabled = await location.requestService();
-              if (!_serviceEnabled) {
-                return;
-              }
-            }
-
-            _permissionGranted = await location.hasPermission();
-            if (_permissionGranted == PermissionStatus.denied) {
-              _permissionGranted = await location.requestPermission();
-              if (_permissionGranted != PermissionStatus.granted) {
-                return;
-              }
-            }
+            // _permissionGranted = await location.hasPermission();
+            // if (_permissionGranted == PermissionStatus.denied) {
+            //   _permissionGranted = await location.requestPermission();
+            //   if (_permissionGranted != PermissionStatus.granted) {
+            //     return;
+            //   }
+            // }
 
             final c = await _controller.future;
-            LocationData locationData = await location.getLocation();
+            // LocationData locationData = await location.getLocation();
             setState(() {
-              latitude = locationData.latitude ?? 0.0;
-              longitude = locationData.longitude ?? 0.0;
-              if(latitude!=0.0 && longitude!=0.0) {
+              latitude = 0.0;
+              longitude = 0.0;
+              // latitude = locationData.latitude ?? 0.0;
+              // longitude = locationData.longitude ?? 0.0;
+              if (latitude != 0.0 && longitude != 0.0) {
                 setState(() {
                   markers.addAll([
                     Marker(
@@ -373,14 +377,10 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
         log(e.toString());
         log(stacktrace.toString());
       }
-
-    } else {
-
-    }
+    } else {}
   }
 
   absen(String kdTryout) async {
-
     EasyLoading.show(
       status: "Tunggu sebentar...",
       dismissOnTap: false,
@@ -392,7 +392,7 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
     hashUser = (await getPrefrence(HASH_USER))!;
 
     String url = "";
-    switch(widget.tryout.jenisTryout) {
+    switch (widget.tryout.jenisTryout) {
       case JenisTryout.jasmani:
         url = urlSimpanAbsenTryoutJasmani;
         break;
@@ -411,7 +411,7 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
     request.fields["kd_tryout"] = kdTryout;
     request.fields["lat"] = latitude.toString();
     request.fields["long"] = longitude.toString();
-    if(fileFoto!=null) {
+    if (fileFoto != null) {
       var pic = await http.MultipartFile.fromPath("foto", fileFoto!.path);
       request.files.add(pic);
     }
@@ -424,13 +424,10 @@ class _PageAbsenTryoutState extends State<PageAbsenTryout> {
         // onError(Object, StackTrace.current, jsonResponse["error"]);
       } else {
         // onSuccess(jsonResponse);
-        if(jsonResponse["success"]) {
-
+        if (jsonResponse["success"]) {
           EasyLoading.showSuccess(jsonResponse["message"]);
           Navigator.pop(context, true);
-
         } else {
-
           EasyLoading.showError(jsonResponse["message"]);
         }
       }

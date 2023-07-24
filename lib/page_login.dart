@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:absentip/utils/app_images.dart';
+import 'package:absentip/utils/text_montserrat.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
@@ -70,14 +72,20 @@ class _PageLoginState extends State<PageLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const Image(
+          image: AssetImage(
+            AppImages.bg2,
+          ),
+          fit: BoxFit.fill,
+        ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         backgroundColor: colorPrimary,
-        title: const SizedBox(
+        title: SizedBox(
           width: double.infinity,
-          child: Text(
-            "Login",
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Colors.black, overflow: TextOverflow.ellipsis),
+          child: TextMontserrat(
+            text: "Login",
+            fontSize: 23,
+            color: Colors.black,
           ),
         ),
       ),
