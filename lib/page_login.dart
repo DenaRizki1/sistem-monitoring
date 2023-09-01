@@ -1,22 +1,21 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
+import 'package:absentip/data/apis/api_connect.dart';
+import 'package:absentip/data/apis/end_point.dart';
+import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/page_home.dart';
+import 'package:absentip/services/location_service.dart';
+import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
-import 'package:absentip/utils/text_montserrat.dart';
-import 'package:art_sweetalert/art_sweetalert.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:http/http.dart' as http;
+import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:absentip/wigets/alert_dialog_confirm_widget.dart';
+import 'package:absentip/wigets/appbar_widget.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'alert_dialog_confirm_widget.dart';
-import 'my_colors.dart';
-import 'page_beranda.dart';
-import 'utils/api.dart';
 import 'utils/constants.dart';
 import 'utils/helpers.dart';
 import 'utils/sessions.dart';
@@ -29,66 +28,42 @@ class PageLogin extends StatefulWidget {
 }
 
 class _PageLoginState extends State<PageLogin> {
-  late SharedPreferences sharedPreferences;
   final _formKey = GlobalKey<FormState>();
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool _passwordVisible = true, _loginLoading = false;
-  String? sDeviceInfo;
-  bool forceLogin = false;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _passwordVisible = true;
+  bool _forceLogin = false;
 
   @override
   void initState() {
+    initLogin();
     super.initState();
-    _getSession();
-    _getDeviceInfo();
   }
 
   @override
   void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _getSession() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-  }
+  Future<void> initLogin() async {
+    final position = await LocationService.instance.getCurrentLocation(context);
+    final prefs = await SharedPreferences.getInstance();
 
-  void _getDeviceInfo() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      sDeviceInfo = jsonEncode(androidInfo.toMap());
-      debugPrint('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      sDeviceInfo = jsonEncode(iosInfo.toMap());
-      debugPrint('Running on ${iosInfo.model}'); // e.g. "iPod7,1"
+    if (position != null) {
+      prefs.setString(LAT_USER, position.latitude.toString());
+      prefs.setString(LNG_USER, position.longitude.toString());
     }
+
+    final tokenNotif = await FirebaseMessaging.instance.getToken();
+    prefs.setString(TOKEN_NOTIF, tokenNotif ?? "");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: const Image(
-          image: AssetImage(
-            AppImages.bg2,
-          ),
-          fit: BoxFit.fill,
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        backgroundColor: colorPrimary,
-        title: SizedBox(
-          width: double.infinity,
-          child: TextMontserrat(
-            text: "Login",
-            fontSize: 23,
-            color: Colors.black,
-          ),
-        ),
-      ),
+      appBar: appBarWidget("login", leading: null),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -101,109 +76,80 @@ class _PageLoginState extends State<PageLogin> {
             children: [
               Container(
                 padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Image.asset('images/logo_gold.png'),
+                child: Image.asset(
+                  AppImages.logoGold,
+                  color: AppColor.biru,
+                ),
               ),
               const SizedBox(
-                height: 16,
+                height: 24,
               ),
               Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: usernameController,
-                        decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange, width: 1.0)),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange, width: 1.0)),
-                            hintText: "Masukkan username / email",
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                            )),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Masukkan username / email";
-                          } else {
-                            usernameController.text = value;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          border: const UnderlineInputBorder(),
-                          focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange, width: 1.0)),
-                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange, width: 1.0)),
-                          hintText: "Masukkan Kata Sandi",
-                          hintStyle: const TextStyle(
-                            color: Colors.grey,
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: textFieldDecoration(textHint: "Masukkan username / email"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Masukkan username / email";
+                        } else {
+                          _usernameController.text = value;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: textFieldDecoration(
+                        textHint: "Masukkan Kata Sandi",
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                            color: AppColor.biru,
                           ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              // Based on passwordVisible state choose the icon
-                              _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                              color: Colors.orange,
-                            ),
-                            onPressed: () {
-                              // Update the state i.e. toogle the state of passwordVisible variable
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
                         ),
-                        obscureText: _passwordVisible,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Masukkan Kata Sandi";
-                          } else {
-                            passwordController.text = value;
+                      ),
+                      obscureText: _passwordVisible,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Masukkan Kata Sandi";
+                        } else {
+                          _passwordController.text = value;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            loginUser(_usernameController.text, _passwordController.text, "normal");
                           }
-                          return null;
                         },
+                        child: const Text('Masuk'),
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      !_loginLoading
-                          ? SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(primary: Colors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      FocusScope.of(context).requestFocus(FocusNode());
-                                      _login(usernameController.text, passwordController.text);
-                                    }
-                                  },
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text('Masuk', style: TextStyle(color: Colors.white, fontSize: 16)),
-                                      SizedBox(width: 10),
-                                      Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
-                                    ],
-                                  )),
-                            )
-                          : Container(
-                              width: double.infinity,
-                              height: 50,
-                              child: const Center(
-                                child: SizedBox(width: 20, height: 20, child: CupertinoActivityIndicator()),
-                              ),
-                            ),
-                    ],
-                  )),
+                    )
+                  ],
+                ),
+              ),
               const SizedBox(
                 height: 16,
               ),
@@ -214,101 +160,87 @@ class _PageLoginState extends State<PageLogin> {
     );
   }
 
-  Future<dynamic> _login(String user, String pass) async {
-    setState(() {
-      _loginLoading = true;
-    });
+  Future<dynamic> loginUser(String email, String password, String loginMode) async {
+    showLoading();
 
-    if (await Helpers.isNetworkAvailable()) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      String sumber = '', model = '', token = '404';
+    String sumber = '', versionOs = '', model = '', branch = '';
 
-      if (Platform.isAndroid) {
-        sumber = 'android';
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        model = '${androidInfo.model}';
-      } else if (Platform.isIOS) {
-        sumber = 'ios';
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        model = '${iosInfo.utsname.machine}';
-      } else {
-        sumber = 'web';
-        WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-        model = '${webBrowserInfo.userAgent}';
-      }
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      sumber = 'android';
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      model = androidInfo.model.toString();
+      branch = androidInfo.brand.toString();
+      versionOs = "${androidInfo.version.release} (${androidInfo.version.sdkInt})";
+    } else if (Platform.isIOS) {
+      sumber = 'ios';
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      model = iosInfo.model.toString();
+      branch = 'apple';
+      versionOs = iosInfo.systemVersion.toString();
+    }
 
-      token = (await getPrefrence(TOKEN)) ?? '';
-
-      var param = {
-        'email': user,
-        'password': pass,
-        'token_auth': '',
-        'token_notif': token,
+    final response = await ApiConnect.instance.request(
+      requestMethod: RequestMethod.post,
+      url: EndPoint.login,
+      params: {
+        'lat_user': await getPrefrence(LAT_USER) ?? "",
+        'lng_user': await getPrefrence(LNG_USER) ?? "",
+        'email': email,
+        'password': password,
+        'token_notif': await getPrefrence(TOKEN_NOTIF) ?? "",
+        'branch': branch,
         'model': model,
-        'imei': '404',
+        'version_os': versionOs,
         'sumber': sumber,
-        'force_login': forceLogin.toString(),
-      };
+        'force_login': _forceLogin.toString(),
+        'version_number': await getPrefrence(BUILD_NUMBER) ?? "",
+        'version_app': await getPrefrence(VERSION) ?? "",
+      },
+    );
 
-      http.Response response = await http.post(
-        Uri.parse(urlLogin),
-        headers: headers,
-        body: param,
-      );
+    dismissLoading();
 
-      setState(() {
-        _loginLoading = false;
-      });
+    if (response != null) {
+      if (response['success']) {
+        final data = response['data'];
 
-      log(response.body);
-      try {
-        Map<String, dynamic> jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-        log(jsonResponse.toString());
-        if (jsonResponse.containsKey("error")) {
-          Helpers.dialogErrorNetwork(context, jsonResponse["error"]);
-        } else {
-          bool success = jsonResponse['success'];
-          String message = jsonResponse['message'];
-          if (success) {
-            var data = jsonResponse['data'];
-            setPrefrenceBool(ISFIRSTTIME, true);
-            setPrefrence(HASH_USER, data['hash_user']);
-            setPrefrence(TOKEN_AUTH, data['token_auth']);
-            setPrefrence(PASSWORD, passwordController.text);
-            setPrefrence(NAMA, data['nama_lengkap']);
-            setPrefrence(EMAIL, data['email']);
-            setPrefrence(NOTLP, data['notlp']);
-            setPrefrence(ALAMAT, data['alamat']);
-            setPrefrence(FOTO, data['foto']);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool(IS_LOGIN, true);
+        prefs.setString(TOKEN_AUTH, data['token_auth'].toString());
+        prefs.setString(HASH_USER, data['hash_user'].toString());
+        prefs.setString(NAMA, data['nama_lengkap'].toString());
+        prefs.setString(EMAIL, data['email'].toString());
+        prefs.setString(NOTLP, data['notlp'].toString());
+        prefs.setString(ALAMAT, data['alamat'].toString());
+        prefs.setString(FOTO, data['foto'].toString());
+        prefs.setString(PASSWORD, password);
 
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageBeranda()), (route) => false);
-          } else {
-            switch (jsonResponse['code'].toString()) {
-              case "0":
-                EasyLoading.showError(jsonResponse['message']);
-                break;
-              case "1":
-                bool result = await showDialog(context: context, builder: (context) => AlertDialogConfirmWidget(message: jsonResponse['message'].toString()));
-                if (result) {
-                  forceLogin = true;
-                  _login(usernameController.text, passwordController.text);
-                }
-                break;
-              default:
-                EasyLoading.showError("Terjadi kesalahan");
-                break;
-            }
+        AppNavigator.instance.pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const PageHome(),
+          ),
+          (p0) => false,
+        );
+      } else {
+        if ((response['code']?.toString() ?? "0") == "1") {
+          final result = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialogConfirmWidget(message: response['message'].toString()),
+          );
+
+          if (result ?? false) {
+            _forceLogin = true;
+            loginUser(email, password, loginMode);
           }
+        } else {
+          clearUserSession();
+          showToast(response['message'].toString());
         }
-      } catch (e, stacktrace) {
-        log(e.toString());
-        log(stacktrace.toString());
       }
     } else {
-      setState(() {
-        _loginLoading = false;
-      });
-      Helpers.dialogErrorNetwork(context, 'Tidak ada koneksi internet');
+      clearUserSession();
+      showToast("Terjadi keslahan");
     }
   }
 }

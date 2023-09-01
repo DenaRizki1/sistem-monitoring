@@ -1,22 +1,16 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:absentip/data/apis/api_connect.dart';
+import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
-import 'package:absentip/data/enums/ApiStatus.dart';
+import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/utils/api.dart';
+import 'package:absentip/page_jadwal_detail.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/constants.dart';
 import 'package:absentip/utils/helpers.dart';
-import 'package:absentip/utils/sessions.dart';
-import 'package:absentip/utils/text_montserrat.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -30,243 +24,245 @@ class PageJadwal extends StatefulWidget {
 }
 
 class _PageJadwalState extends State<PageJadwal> {
-  String filterTahun = "", filterBulan = "", filterTgl = "";
-  List rekapJadwal = [];
-
-  DateTime? selectedDate;
+  final _apiResponse = ApiResponse();
+  final _refreshC = RefreshController();
+  final _listKegiatan = [];
+  DateTime _filterDate = DateTime.now();
 
   @override
   void initState() {
-    // TODO: implement initState
-    filterTahun = DateTime.now().year.toString();
-    filterBulan = DateTime.now().month.toString();
-    filterTgl = DateTime.now().day.toString();
-    getJadwal();
+    getKegiatan();
     super.initState();
   }
 
-  // getJadwal() async {
-  //   if (mounted) {
-  //     setState(() {
-  //       rekapJadwal.clear();
-  //     });
-  //   }
-  //   if (await Helpers.isNetworkAvailable()) {
-  //     String tokenAuth = "", hashUser = "";
-  //     tokenAuth = (await getPrefrence(TOKEN_AUTH))!;
-  //     hashUser = (await getPrefrence(HASH_USER))!;
+  @override
+  void dispose() {
+    _refreshC.dispose();
+    super.dispose();
+  }
 
-  //     var params = {
-  //       'token_auth': tokenAuth,
-  //       'hash_user': hashUser,
-  //       'tahun': filterTahun,
-  //       'bulan': filterBulan,
-  //     };
-
-  //     http.Response response = await http.post(
-  //       Uri.parse(urlGetRekapAbsen),
-  //       headers: headers,
-  //       body: params,
-  //     );
-  //     Map<String, dynamic> jadwal = json.decode(response.body);
-
-  //     for (int i = 0; i < jadwal['data'].length; i++) {
-  //       if (jadwal['data'][i]['label_jadwal'] == "Ada jadwal") {
-  //         log(jadwal['data'][i]['label_jadwal'] + " " + jadwal['data'][i]['tanggal']);
-  //         rekapJadwal.add(jadwal['data'][i]);
-  //         if (mounted) {
-  //           setState(() {});
-  //         }
-  //         log(rekapJadwal.toString());
-  //       }
-  //     }
-  //     log(filterTgl);
-  //     log(filterBulan);
-  //     log(jadwal['data'][6]['tanggal'].toString());
-  //   }
-  // }
-
-  ApiStatus _apiStatus = ApiStatus.loading;
-  final _refreshController = RefreshController(initialRefresh: false);
-
-  Future<void> getJadwal() async {
+  Future<void> getKegiatan() async {
     setState(() {
-      _apiStatus = ApiStatus.loading;
-      rekapJadwal.clear();
+      _apiResponse.setApiSatatus = ApiStatus.loading;
+      _listKegiatan.clear();
     });
-    final pref = await SharedPreferences.getInstance();
 
+    final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.urlGetRekapAbsen,
+      url: EndPoint.jadwalPengajar,
       params: {
-        'token_auth': pref.getString(TOKEN_AUTH)!,
-        'hash_user': pref.getString(HASH_USER)!,
-        'tahun': filterTahun,
-        'bulan': filterBulan,
+        'token_auth': pref.getString(TOKEN_AUTH) ?? "",
+        'hash_user': pref.getString(HASH_USER) ?? "",
+        'tahun': parseDateInd(_filterDate.toString(), "yyyy"),
+        'bulan': parseDateInd(_filterDate.toString(), "MM"),
       },
     );
 
-    final jadwal = response;
+    if (_refreshC.isRefresh) {
+      _refreshC.refreshCompleted();
+    }
 
     if (response != null) {
       if (response['success']) {
-        for (int i = 0; i < jadwal!['data'].length; i++) {
-          if (jadwal['data'][i]['label_jadwal'] == "Ada jadwal") {
-            log(jadwal['data'][i]['label_jadwal'] + " " + jadwal['data'][i]['tanggal']);
-            rekapJadwal.add(jadwal['data'][i]);
-            if (mounted) {
-              setState(() {
-                _apiStatus = ApiStatus.success;
-              });
-            }
-            log(rekapJadwal.toString());
-          }
-        }
-      } else {
-        showToast(response['message'].toString());
         if (mounted) {
           setState(() {
-            _apiStatus = ApiStatus.empty;
+            _apiResponse.setApiSatatus = ApiStatus.success;
+            _listKegiatan.addAll(response['data']);
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _apiResponse.setApiSatatus = ApiStatus.empty;
+            _apiResponse.setMessage = response['message'].toString();
           });
         }
       }
     } else {
-      setState(() {
-        _apiStatus = ApiStatus.failed;
-      });
+      if (mounted) {
+        setState(() {
+          _apiResponse.setApiSatatus = ApiStatus.failed;
+          _apiResponse.setMessage = "Terjadi kesalahan";
+        });
+      }
     }
-
-    if (_refreshController.isRefresh) {
-      _refreshController.refreshCompleted();
-    }
-
-    log(response.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: appBarWidget("Jadwal Pengajar", leading: null),
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Container(
-              width: 110,
-              child: ElevatedButton(
-                onPressed: () {
-                  showMonthPicker(
-                    context: context,
-                    firstDate: DateTime(2022),
-                    lastDate: DateTime.now(),
-                    initialDate: selectedDate ?? DateTime.now(),
-                  ).then((date) {
-                    if (date != null) {
-                      setState(() {
-                        selectedDate = date;
-                        filterBulan = date.month.toString();
-                        filterTahun = date.year.toString();
-                      });
-                      getJadwal();
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Icon(MdiIcons.calendar),
-                    const SizedBox(width: 5),
-                    TextMontserrat(
-                      text: "${filterBulan}-${filterTahun}",
-                      fontSize: 10,
-                    ),
-                  ],
-                ),
+          SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Image.asset(
+              'images/bg_doodle.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColor.biru2,
+                  AppColor.biru2.withOpacity(0.6),
+                  Colors.white.withOpacity(0.1),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
-          Divider(),
-          // Expanded(
-          //   child: ListView.separated(
-          //     shrinkWrap: true,
-          //     physics: AlwaysScrollableScrollPhysics(),
-          //     padding: const EdgeInsets.all(12),
-          //     itemCount: rekapJadwal.length,
-          //     itemBuilder: (context, index) {
-
-          //     },
-          //     separatorBuilder: (BuildContext context, int index) => const Divider(height: 0),
-          //   ),
-          // ),
-          Expanded(
-            child: SmartRefresher(
-              controller: _refreshController,
-              header: const ClassicHeader(),
-              physics: const BouncingScrollPhysics(),
-              onRefresh: getJadwal,
-              child: Builder(
-                builder: (context) {
-                  if (_apiStatus == ApiStatus.success) {
-                    return ListView.builder(
-                      itemCount: rekapJadwal.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(bottom: 12),
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Card(
-                          elevation: 5,
-                          color: filterBulan == DateTime.now().month.toString() && filterTgl == rekapJadwal[index]['tanggal'].toString().replaceAll("0", "") ? AppColor.kuning : null,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    showMonthPicker(
+                      headerColor: AppColor.biru2,
+                      selectedMonthBackgroundColor: AppColor.biru,
+                      unselectedMonthTextColor: AppColor.biru,
+                      context: context,
+                      firstDate: DateTime(2022),
+                      lastDate: DateTime.now(),
+                      initialDate: DateTime.now(),
+                    ).then((date) {
+                      if (date != null) {
+                        _filterDate = date;
+                        getKegiatan();
+                      }
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(MdiIcons.calendar, color: Colors.black, size: 16),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          parseDateInd(_filterDate.toString(), "MMMM yyyy"),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextMontserrat(
-                                      text: rekapJadwal[index]['hari'].toString(),
-                                      fontSize: 18,
-                                      color: filterBulan == DateTime.now().month.toString() && filterTgl == rekapJadwal[index]['tanggal'].toString().replaceAll("0", "") ? Colors.white : Colors.black,
-                                    ),
-                                    TextMontserrat(
-                                      text: (rekapJadwal[index]['tanggal'] + "-" + rekapJadwal[index]['bulan'] + "-" + rekapJadwal[index]['tahun']).toString(),
-                                      fontSize: 14,
-                                      color: filterBulan == DateTime.now().month.toString() && filterTgl == rekapJadwal[index]['tanggal'].toString().replaceAll("0", "")
-                                          ? Colors.white.withOpacity(0.7)
-                                          : Colors.grey,
-                                    )
-                                  ],
-                                )),
-                                Expanded(
-                                    child: TextMontserrat(
-                                  text: "Jadwal",
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                )),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (_apiStatus == ApiStatus.loading) {
-                    if (_refreshController.isRefresh) {
-                      return Container();
-                    } else {
-                      return const Center(child: CupertinoActivityIndicator());
-                    }
-                  } else if (_apiStatus == ApiStatus.empty) {
-                    return const Center(child: Text("Halaman tidak ditemukan"));
-                  } else {
-                    return const Center(child: Text("Terjadi kesalahan"));
-                  }
-                },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              const Divider(
+                height: 1,
+                color: Colors.black54,
+              ),
+              Expanded(
+                child: SmartRefresher(
+                  controller: _refreshC,
+                  physics: const BouncingScrollPhysics(),
+                  onRefresh: getKegiatan,
+                  child: Builder(
+                    builder: (context) {
+                      if (_apiResponse.getApiStatus == ApiStatus.success) {
+                        return ListView.builder(
+                          itemCount: _listKegiatan.length,
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: 12),
+                          itemBuilder: (context, index) {
+                            Map kegiatan = _listKegiatan[index];
+                            return Card(
+                              color: Colors.white,
+                              elevation: 2,
+                              margin: const EdgeInsets.only(left: 16, right: 16, top: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  AppNavigator.instance.push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PageJadwalDetail(
+                                        tglJadwal: kegiatan['tgl_pegawai_jadwal'].toString(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: AppColor.hitam.withAlpha(200),
+                                      ),
+                                      child: Text(
+                                        parseDateInd(kegiatan['tgl_pegawai_jadwal'].toString(), "dd MMM yyyy"),
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            kegiatan['nama_jadwal'].toString(),
+                                            style: GoogleFonts.montserrat(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            "Pukul " + parseDateInd(kegiatan['jam_masuk'].toString(), "HH:mm") + " s/d " + parseDateInd(kegiatan['jam_pulang'].toString(), "HH:mm") + " WIB",
+                                            style: GoogleFonts.montserrat(
+                                              color: Colors.black,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else if (_apiResponse.getApiStatus == ApiStatus.loading) {
+                        return loadingWidget();
+                      } else {
+                        return emptyWidget(_apiResponse.getMessage);
+                      }
+                    },
+                  ),
+                ),
+              )
+            ],
           ),
         ],
       ),

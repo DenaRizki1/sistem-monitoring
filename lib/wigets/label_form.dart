@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LabelForm extends StatelessWidget {
   final String label;
@@ -9,7 +10,7 @@ class LabelForm extends StatelessWidget {
     Key? key,
     required this.label,
     this.isRequired = false,
-    this.fontSize = 12,
+    this.fontSize = 11,
   }) : super(key: key);
 
   @override
@@ -18,13 +19,13 @@ class LabelForm extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.black),
+          style: GoogleFonts.montserrat(fontSize: fontSize, fontWeight: FontWeight.w500),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         Visibility(
           visible: isRequired,
-          child: Text('*', style: TextStyle(color: Colors.red, fontSize: (fontSize + 2), fontWeight: FontWeight.bold)),
+          child: Text('*', style: GoogleFonts.montserrat(color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold)),
         ),
       ],
     );

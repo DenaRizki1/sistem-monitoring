@@ -1,17 +1,17 @@
-final String ISFIRSTTIME = 'loginfirst';
+// ignore_for_file: constant_identifier_names
+
+//? session user
+const String IS_LOGIN = 'is_login';
 const String HASH_USER = "hash_user";
 const String TOKEN_AUTH = "token_auth";
-const String NIK = "nik";
 const String NAMA = "nama";
 const String EMAIL = "email";
 const String NOTLP = "notlp";
-const String NOREK = "norek";
-const String ATAS_NAMA = "atas_nama";
-const String BANK = "bank";
 const String ALAMAT = "alamat";
-const String NOMOR_ANGGOTA = "nomor_anggota";
-const String URL_REFFERAL = "url_refferal";
-const String QR_REFFERAL = "qr_refferal";
 const String FOTO = "foto";
 const String PASSWORD = "password";
-const String TOKEN = "token";
+const String TOKEN_NOTIF = "token_notif";
+const String LAT_USER = "lat_user";
+const String LNG_USER = "lng_user";
+const String VERSION = "version";
+const String BUILD_NUMBER = "build_number";

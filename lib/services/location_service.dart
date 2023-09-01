@@ -29,15 +29,15 @@ class LocationService {
         return null;
 
       case 3:
-        showDialogOpenSettingPermission(context);
+        showDialogOpenSettingLocationPermission(context);
         return null;
 
       default:
         try {
           Position position = await _geolocatorPlatform.getCurrentPosition(locationSettings: _locationSettings);
-          // if (position.isMocked) {
-          //   showToast("Anda terdeteksi menggunakan lokasi palsu");
-          // }
+          if (position.isMocked) {
+            showToast("Anda terdeteksi menggunakan lokasi palsu");
+          }
           return position;
         } catch (e) {
           log(e.toString());

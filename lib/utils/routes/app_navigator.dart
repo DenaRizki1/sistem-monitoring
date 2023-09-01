@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:absentip/main.dart';
 import 'package:flutter/material.dart';
 
 class AppNavigator {
@@ -18,24 +15,6 @@ class AppNavigator {
 
   BuildContext? context() {
     return navigatorKey.currentState?.context;
-  }
-
-  void test(BuildContext context) async {
-    String nameRoute = "";
-    log("kodeccccc salaksaal");
-
-    // final context = navigatorKey.currentState?.context;÷\
-    if (context != null) {
-      // nameRoute =  ;
-      print("ModalRoute.of(context)?.settings");
-      // print(ModalRoute.of(context));
-      // print(ModalRoute.of(navigatorKey.currentContext!)?.settings.arguments);
-      print(ModalRoute.of(context));
-    } else {
-      log("kode nnnull");
-    }
-
-    log("$nameRoute--------bcbcbcb");
   }
 
   Future<T?> push<T extends Object?>(Route<T> route) async {

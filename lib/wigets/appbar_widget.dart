@@ -3,6 +3,7 @@ import 'package:absentip/wigets/appbar_leading.dart';
 import 'package:animate_do/animate_do.dart';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../utils/app_color.dart';
 
@@ -23,13 +24,13 @@ AppBar appBarWidget(String title, {Widget? leading = const AppbarLeading(), List
     title: FadeInUp(
       child: Text(
         title,
-        style: const TextStyle(
-          color: Colors.black,
+        style: GoogleFonts.montserrat(
+          color: Colors.white,
           fontSize: 18,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
         ),
       ),
     ),
-    backgroundColor: AppColor.kuning,
+    backgroundColor: AppColor.biru,
   );
 }

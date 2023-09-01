@@ -1,17 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
-import 'package:absentip/data/enums/ApiStatus.dart';
+import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/provider/notification_model_provider.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../utils/helpers.dart';
 
 class MainProvider with ChangeNotifier {
   int _currentIndex = 0;

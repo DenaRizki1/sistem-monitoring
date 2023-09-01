@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 
-setPrefrence(String key, String value) async {
+Future<void> setPrefrence(String key, String value) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString(key, value);
 }
@@ -14,7 +17,7 @@ Future<String?> getPrefrence(String key) async {
 }
 
 //prefrence boolean set using this function
-setPrefrenceBool(String key, bool value) async {
+Future<void> setPrefrenceBool(String key, bool value) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setBool(key, value);
 }
@@ -26,15 +29,23 @@ Future<bool> getPrefrenceBool(String key) async {
 }
 
 Future<void> clearUserSession() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (!kIsWeb) {
+    await GoogleSignIn().signOut();
+  }
 
-  prefs.remove(HASH_USER);
-  prefs.remove(TOKEN_AUTH);
-  prefs.remove(NIK);
-  prefs.remove(NAMA);
-  prefs.remove(EMAIL);
-  prefs.remove(NOTLP);
-  prefs.remove(ALAMAT);
-  prefs.remove(FOTO);
-  prefs.remove(PASSWORD);
+  FirebaseAuth.instance.signOut();
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool(IS_LOGIN, false);
+  prefs.setString(HASH_USER, "");
+  prefs.setString(TOKEN_AUTH, "");
+  prefs.setString(NAMA, "");
+  prefs.setString(EMAIL, "");
+  prefs.setString(NOTLP, "");
+  prefs.setString(ALAMAT, "");
+  prefs.setString(FOTO, "");
+  prefs.setString(PASSWORD, "");
+  prefs.setString(TOKEN_NOTIF, "");
+  prefs.setString(LAT_USER, "");
+  prefs.setString(LNG_USER, "");
 }

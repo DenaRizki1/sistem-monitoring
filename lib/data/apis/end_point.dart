@@ -2,39 +2,50 @@ import 'package:absentip/utils/config/api_config.dart';
 
 abstract class EndPoint {
   static String urlLogin = '${getBaseUrl()}/auth_guru/loginV2';
-  // static String urlLogout = '${getBaseUrl()}/auth_guru/logoutAuth';
-  // static String urlUbahPassword = '${getBaseUrl()}/auth_guru/ubahPassword';
   static String urlListTryoutHariIni = '${getBaseUrl()}/beranda/tryout_hariini';
-  // static String urlKebijakanPrivasi = '${getBaseUrl()}/beranda/getKebijakan';
-  // static String urlSyaratKetentuan = '${getBaseUrl()}/beranda/getTermAndCondition';
 
-  static String urlGetAbsenHarian = '${getBaseUrl()}/absen/getAbsenHarian';
-  static String urlSimpanAbsenHarian = '${getBaseUrlV2()}/absen/simpanAbsen';
-  static String urlGetRekapAbsen = '${getBaseUrlV2()}/absen/absenHarian';
-  static String urlCekAbsen = '${getBaseUrlV2()}/absen/cekAbsen';
+  //! API PENGAJAR KEUANGAN
+  static String login = '${getBaseUrl()}/auth_pengajar/login';
+  static String checkLogin = '${getBaseUrl()}/auth_pengajar/checkLogin';
+  static String logout = '${getBaseUrl()}/auth_pengajar/logout';
+  static String gantiPassword = '${getBaseUrl()}/auth_pengajar/gantiPassword';
+  static String termCondition = '${getBaseUrl()}/auth_pengajar/termCondition';
+  static String policyPrivacy = '${getBaseUrl()}/auth_pengajar/policyPrivacy';
+  static String uploadAvatar = '${getBaseUrl()}/auth_pengajar/uploadAvatar';
 
-  static String urlSimpanAbsenIzin = '${getBaseUrlV2()}/absen/simpanAbsenIzin';
-  static String urlSimpanAbsenCuti = '${getBaseUrlV2()}/absen/simpanAbsenCuti';
-  static String urlGetRekapIzin = '${getBaseUrlV2()}/absen/absenIzin';
-  static String urlGetRekapCuti = '${getBaseUrlV2()}/absen/absenCuti';
-  static String urlGetProgresAbsen = '${getBaseUrlV2()}/absen/rekapAbsen';
+  static String notif = '${getBaseUrl()}/notifikasi/notif';
+  static String readNotif = '${getBaseUrl()}/notifikasi/readNotif';
+  static String deleteNotif = '${getBaseUrl()}/notifikasi/deleteNotif';
 
-  static String urlGetNotifikasi = '${getBaseUrlV2()}/notifikasi/notif';
-  static String urlReadNotifikasi = '${getBaseUrlV2()}/notifikasi/readNotif';
-  static String urlDeleteNotifikasi = '${getBaseUrlV2()}/notifikasi/deleteNotif';
+  static String simpanAbsen = '${getBaseUrl()}/absen/simpanAbsen';
+  static String cekAbsen = '${getBaseUrl()}/absen/cekAbsen';
+  static String cekBarcodeAbsen = '${getBaseUrl()}/absen/cekBarcodeAbsen';
+  static String absenHarian = '${getBaseUrl()}/absen/absenHarian';
+  static String absenHarianDetail = '${getBaseUrl()}/absen/absenHarianDetail';
+  static String simpanAbsenIzin = '${getBaseUrl()}/absen/simpanAbsenIzin';
+  static String simpanAbsenCuti = '${getBaseUrl()}/absen/simpanAbsenCuti';
+  static String hitungJumlahCuti = '${getBaseUrl()}/absen/hitungJumlahCuti';
+  static String absenIzin = '${getBaseUrl()}/absen/absenIzin';
+  static String absenCuti = '${getBaseUrl()}/absen/absenCuti';
+  static String rekapAbsen = '${getBaseUrl()}/absen/rekapAbsen';
+  static String jadwalAbsen = '${getBaseUrl()}/absen/jadwalAbsen';
 
-  // static String urlListTryoutJasmaniByPengajar = '${getBaseUrl()}/jasmani/list_jadwal_tryout_by_pengajar';
-  // static String urlDetailTryoutJasmani = '${getBaseUrl()}/jasmani/detail_jadwal_tryout';
-  // static String urlGetAbsenTryoutJasmani = '${getBaseUrl()}/jasmani/getAbsenTryout';
-  // static String urlSimpanAbsenTryoutJasmani = '${getBaseUrl()}/jasmani/simpanAbsenTryout';
+  static String simpanLembur = '${getBaseUrl()}/lembur/simpanLembur';
+  static String lembur = '${getBaseUrl()}/lembur/lembur';
 
-  // static String urlListTryoutAkademikByPengajar = '${getBaseUrl()}/akademik/list_jadwal_tryout_by_pengajar';
-  // static String urlDetailTryoutAkademik = '${getBaseUrl()}/akademik/detail_jadwal_tryout';
-  // static String urlGetAbsenTryoutAkademik = '${getBaseUrl()}/akademik/getAbsenTryout';
-  // static String urlSimpanAbsenTryoutAkademik = '${getBaseUrl()}/akademik/simpanAbsenTryout';
+  static String aktivitas = '${getBaseUrl()}/aktivitas/aktivitas';
+  static String aktivitasDetail = '${getBaseUrl()}/aktivitas/aktivitasDetail';
+  static String simpanAktivitas = '${getBaseUrl()}/aktivitas/simpanAktivitas';
+  static String updateAktivitas = '${getBaseUrl()}/aktivitas/updateAktivitas';
+  static String uploadAktivitas = '${getBaseUrl()}/aktivitas/uploadAktivitas';
 
-//   static String urlListTryoutPsikologiByPengajar = '${getBaseUrl()}/psikologi/list_jadwal_tryout_by_pengajar';
-//   static String urlDetailTryoutPsikologi = '${getBaseUrl()}/psikologi/detail_jadwal_tryout';
-//   static String urlGetAbsenTryoutPsikologi = '${getBaseUrl()}/psikologi/getAbsenTryout';
-//   static String urlSimpanAbsenTryoutPsikologi = '${getBaseUrl()}/psikologi/simpanAbsenTryout';
+  static String kegiatan = '${getBaseUrl()}/kegiatan/kegiatan';
+  static String kegiatanDetail = '${getBaseUrl()}/kegiatan/kegiatanDetail';
+  static String cekKegiatan = '${getBaseUrl()}/kegiatan/cekKegiatan';
+  static String simpanAbsenKegiatan = '${getBaseUrl()}/kegiatan/simpanAbsenKegiatan';
+
+  static String jadwalPengajar = '${getBaseUrl()}/jadwal/jadwalPengajar';
+  static String jadwalPengajarDetail = '${getBaseUrl()}/jadwal/jadwalPengajarDetail';
+
+  static String event = '${getBaseUrl()}/kalender/event';
 }

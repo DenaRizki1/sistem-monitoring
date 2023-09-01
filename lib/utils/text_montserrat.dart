@@ -1,18 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TextMontserrat extends StatelessWidget {
-  String text;
-  double fontSize;
-  bool bold;
-  int maxLines;
-  Color color;
-  TextAlign textAlign;
-  TextMontserrat({
+  final String text;
+  final double fontSize;
+  final bool bold;
+  final int maxLines;
+  final Color color;
+  final TextAlign textAlign;
+
+  const TextMontserrat({
     Key? key,
     required this.text,
     required this.fontSize,

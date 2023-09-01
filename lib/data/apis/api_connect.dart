@@ -57,13 +57,7 @@ class ApiConnect {
       if (body['success'] == false) {
         if (body['message'].toString() == "Your Not Authorized") {
           clearUserSession();
-          // AppNavigator.instance.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const PageLogin(), (p0) => false);
-          //Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const PageLogin()), (route) => false);
-          AppNavigator.instance.pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => const PageLogin(),
-              ),
-              (p0) => false);
+          AppNavigator.instance.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const PageLogin()), (p0) => false);
           showToast(body['message']);
         }
       }

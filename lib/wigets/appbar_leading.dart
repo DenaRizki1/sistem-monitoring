@@ -12,17 +12,17 @@ class AppbarLeading extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(2),
-        // decoration: BoxDecoration(
-        //   color: Colors.white,
-        //   borderRadius: BorderRadius.circular(6),
-        //   boxShadow: const [
-        //     BoxShadow(
-        //       color: Colors.black26,
-        //       offset: Offset(3, 3),
-        //       blurRadius: 3,
-        //     ),
-        //   ],
-        // ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(3, 3),
+              blurRadius: 3,
+            ),
+          ],
+        ),
         // decoration: BoxDecoration(
         //   color: AppColor.hitam.withOpacity(0.5),
         //   borderRadius: BorderRadius.circular(6),
@@ -31,13 +31,13 @@ class AppbarLeading extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: AppColor.hitam.withOpacity(0.3),
+            color: AppColor.biru,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Center(
             child: Icon(
               MdiIcons.chevronLeft,
-              color: Colors.black,
+              color: Colors.white,
               size: 24,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:absentip/utils/routes/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -63,7 +64,7 @@ class _ShowImagePageState extends State<ShowImagePage> {
                 color: Colors.white,
               ),
               iconSize: 30,
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => AppNavigator.instance.pop(),
             ),
           ),
         ],

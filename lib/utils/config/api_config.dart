@@ -1,16 +1,13 @@
 import 'dart:convert';
 
-const String bau = '4p1k3yr3st4T1PPppPPpp';
-const String bap = '88d19af4acfa4d8aad5d4eb496b520b2';
+const String bau = '4p1k3yr3st4p1P3ng4j4R';
+const String bap = '88d19af4acfa4d8aad5d4eb496b520b24jfij';
 
 String getBasicAuth() {
   return 'Basic ${base64Encode(utf8.encode("$bau:$bap"))}';
 }
 
 String getBaseUrl() {
-  return "https://apps.tacticalinpolice.com/api_guru";
-}
-
-String getBaseUrlV2() {
-  return "https://apps.tacticalinpolice.com/api_guru_v2";
+  // return "https://keuangan.tacticalinpolice.com/apipengajar_v1";
+  return "https://api.tacticalinpolice.com/tip5/apipengajar_v1";
 }

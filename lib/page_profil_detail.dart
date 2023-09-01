@@ -1,15 +1,22 @@
-import 'dart:ui';
+import 'dart:developer';
+import 'dart:io';
 
-import 'package:absentip/my_colors.dart';
-import 'package:absentip/session_helper.dart';
+import 'package:absentip/data/apis/api_connect.dart';
+import 'package:absentip/data/apis/end_point.dart';
+import 'package:absentip/utils/my_colors.dart';
+import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/utils/constants.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:absentip/utils/helpers.dart';
+import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-import 'my_appbar.dart';
 import 'utils/sessions.dart';
 
 class PageProfilDetail extends StatefulWidget {
@@ -24,264 +31,301 @@ class _PageProfilDetailState extends State<PageProfilDetail> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     init();
+    super.initState();
   }
 
   init() async {
-    String nm = "", em = "", nt = "", alm = "", ft = "";
-    nm = (await getPrefrence(NAMA))!;
-    em = (await getPrefrence(EMAIL))!;
-    nt = (await getPrefrence(NOTLP))!;
-    alm = (await getPrefrence(ALAMAT))!;
-    ft = (await getPrefrence(FOTO))!;
-    setState(() {
-      nama = nm;
-      email = em;
-      notlp = nt;
-      alamat = alm;
-      foto = ft;
-    });
+    nama = await getPrefrence(NAMA) ?? "";
+    email = await getPrefrence(EMAIL) ?? "";
+    notlp = await getPrefrence(NOTLP) ?? "";
+    alamat = await getPrefrence(ALAMAT) ?? "";
+    foto = await getPrefrence(FOTO) ?? "";
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        // appBar: AppBar(
-        //   centerTitle: true,
-        //   // systemOverlayStyle: SystemUiOverlayStyle.dark,
-        //   flexibleSpace: Image(
-        //     image: AssetImage(AppImages.bg2),
-        //     fit: BoxFit.cover,
-        //   ),
-        //   backgroundColor: colorPrimary,
-        //   leading: GestureDetector(
-        //     // onTap: () => AppNavigator.instance.pop(),
-        //     onTap: () => Navigator.of(context, rootNavigator: true).pop(),
-        //     child: Container(
-        //       margin: const EdgeInsets.all(10),
-        //       padding: const EdgeInsets.all(2),
-        //       decoration: BoxDecoration(
-        //         color: Colors.white,
-        //         borderRadius: BorderRadius.circular(6),
-        //         boxShadow: const [
-        //           BoxShadow(
-        //             color: Colors.black26,
-        //             offset: Offset(3, 3),
-        //             blurRadius: 3,
-        //           ),
-        //         ],
-        //       ),
-        //       // decoration: BoxDecoration(
-        //       //   color: Colors.white.withOpacity(0.2),
-        //       //   borderRadius: BorderRadius.circular(6),
-        //       // ),
-        //       child: Container(
-        //         width: 32,
-        //         height: 32,
-        //         decoration: BoxDecoration(
-        //           color: colorPrimary,
-        //           borderRadius: BorderRadius.circular(6),
-        //         ),
-        //         child: Center(
-        //           child: Icon(
-        //             MdiIcons.chevronLeft,
-        //             color: Colors.white,
-        //             size: 24,
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-
-        //   title: const SizedBox(
-        //     // width: double.infinity,
-        //     child: Text(
-        //       "Rekap Absen Harian",
-        //       textAlign: TextAlign.start,
-        //       style: TextStyle(
-        //         color: Colors.black,
-        //         overflow: TextOverflow.ellipsis,
-        //         fontSize: 18,
-        //         fontWeight: FontWeight.w600,
-        //       ),
-        //     ),
-        //   ),
-        //   actions: <Widget>[
-        //     // IconButton(
-        //     //   icon: const Icon(Icons.calendar_today_rounded),
-        //     //   onPressed: () {
-        //     //     Navigator.push(context, MaterialPageRoute(builder: (context) => const PageRekapAbsenHarian()));
-        //     //   },
-        //     // )
-        //   ],
-        // ),
-        body: foto == ""
-            ? CupertinoActivityIndicator()
-            : Stack(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Image.asset(
-                      'images/bg_doodle.jpg',
-                      fit: BoxFit.cover,
-                      // color: const Color.fromRGBO(255, 255, 255, 0.1),
-                      // colorBlendMode: BlendMode.modulate,
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        // height: 70,
-                        padding: EdgeInsets.symmetric(vertical: 6),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Color(0xffc18e28),
-                          image: DecorationImage(
-                            image: AssetImage(AppImages.bg2),
-                            fit: BoxFit.cover,
-                          ),
+    return Scaffold(
+      appBar: appBarWidget("Profil Detail"),
+      body: Stack(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Image.asset(
+              'images/bg_doodle.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColor.biru2,
+                  AppColor.biru2.withOpacity(0.6),
+                  Colors.white.withOpacity(0.1),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+          ListView(
+            children: [
+              Container(
+                width: 140,
+                height: 140,
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
+                ),
+                child: Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 100,
+                      foregroundImage: Image.network(
+                        foto,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return SizedBox(
+                            child: Center(
+                              child: loadingWidget(),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                          AppImages.logoGold,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              // onTap: () => AppNavigator.instance.pop(),
-                              onTap: () => Navigator.of(context, rootNavigator: true).pop(),
-                              child: Container(
-                                margin: const EdgeInsets.all(10),
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(6),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(3, 3),
-                                      blurRadius: 3,
+                      ).image,
+                    ),
+                    Positioned.fill(
+                      top: 100,
+                      left: 100,
+                      bottom: 6,
+                      right: 6,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColor.biru,
+                        ),
+                        child: InkWell(
+                          onTap: () async {
+                            final result = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                contentPadding: const EdgeInsets.all(8),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        AppNavigator.instance.pop(true);
+                                      },
+                                      child: const ListTile(
+                                        leading: Icon(Icons.camera),
+                                        title: Text("Kamera"),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    InkWell(
+                                      onTap: () {
+                                        AppNavigator.instance.pop(false);
+                                      },
+                                      child: const ListTile(
+                                        leading: Icon(Icons.folder),
+                                        title: Text("Galeri"),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                // decoration: BoxDecoration(
-                                //   color: Colors.white.withOpacity(0.2),
-                                //   borderRadius: BorderRadius.circular(6),
-                                // ),
-                                child: Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: colorPrimary,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      MdiIcons.chevronLeft,
-                                      color: Colors.white,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 40),
-                                child: Center(
-                                  child: Text(
-                                    "Profile Setting",
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
+                            );
+
+                            XFile? imageFile;
+
+                            if (result == null) {
+                              return;
+                            }
+
+                            if (result) {
+                              //? open camera
+                              if (Platform.isIOS) {
+                                try {
+                                  imageFile = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 80);
+                                } catch (e) {
+                                  PermissionStatus permission = await Permission.photos.status;
+                                  if (permission != PermissionStatus.granted) {
+                                    if (mounted) {
+                                      alertOpenSetting(context);
+                                    }
+                                  }
+                                }
+                              } else {
+                                try {
+                                  imageFile = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 80);
+                                } catch (e) {
+                                  PermissionStatus permission = await Permission.camera.status;
+                                  if (permission == PermissionStatus.denied) {
+                                    //? Requesting the permission
+                                    PermissionStatus statusDenied = await Permission.camera.request();
+                                    if (statusDenied.isPermanentlyDenied) {
+                                      //? permission isPermanentlyDenied
+                                      if (mounted) {
+                                        alertOpenSetting(context);
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            } else {
+                              //? open galery
+                              if (Platform.isIOS) {
+                                try {
+                                  imageFile = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 100);
+                                } catch (e) {
+                                  PermissionStatus permission = await Permission.photos.status;
+                                  if (permission != PermissionStatus.granted) {
+                                    if (mounted) {
+                                      alertOpenSetting(context);
+                                    }
+                                  }
+                                }
+                              } else {
+                                try {
+                                  imageFile = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 100);
+                                } catch (e) {
+                                  PermissionStatus permission = await Permission.storage.status;
+                                  if (permission == PermissionStatus.denied) {
+                                    //? Requesting the permission
+                                    PermissionStatus statusDenied = await Permission.storage.request();
+                                    if (statusDenied.isPermanentlyDenied) {
+                                      //? permission isPermanentlyDenied
+                                      if (mounted) {
+                                        alertOpenSetting(context);
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+
+                            print(imageFile);
+
+                            //? upload image
+                            await uploadAvatarProfile(imageFile);
+                          },
+                          child: Icon(
+                            MdiIcons.pencil,
+                            size: 18,
+                            color: Colors.white,
+                          ),
                         ),
-                        // color: Colors.red,
                       ),
-                      Center(
-                        child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.only(top: 16, bottom: 20, left: MediaQuery.of(context).size.width * 0.33, right: MediaQuery.of(context).size.width * 0.33),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  // Color(0xffc18e28).withOpacity(0.7),
-                                  Color(0xffc18e28),
-                                  Color(0xffc18e28).withOpacity(0.6),
-                                  // Colors.white.withOpacity(0.5),
-                                  Colors.white.withOpacity(0.1),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                            child: Container(
-                              height: 130,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(50),
-                                image: DecorationImage(image: NetworkImage(foto), fit: BoxFit.contain),
-                              ),
-                            )),
-                      ),
-                      const SizedBox(height: 30),
-                      CardCustom(nama, "Nama"),
-                      const SizedBox(height: 10),
-                      CardCustom(email, "Email"),
-                      const SizedBox(height: 10),
-                      CardCustom(notlp, "No.telp"),
-                      const SizedBox(height: 10),
-                      CardCustom(alamat, "Alamat"),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(height: 20),
+              cardCustom(nama, "Nama"),
+              const SizedBox(height: 10),
+              cardCustom(email, "Email"),
+              const SizedBox(height: 10),
+              cardCustom(notlp, "No.telp"),
+              const SizedBox(height: 10),
+              cardCustom(alamat, "Alamat"),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget CardCustom(String? text, String? content) {
+  Widget cardCustom(String text, String content, {void Function()? onTap}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
       color: Colors.white,
       elevation: 5,
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-                child: Text(
-              content!,
-              style: GoogleFonts.montserrat(color: Colors.grey, fontSize: 16),
-            )),
-            Text(
-              text!,
-              style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
+              flex: 1,
+              child: Text(
+                content,
+                style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 14),
               ),
             ),
-            SizedBox(width: 16),
-            Icon(
-              MdiIcons.pencil,
-              color: colorPrimary,
-              size: 20,
+            Expanded(
+              flex: 2,
+              child: Text(
+                text,
+                style: GoogleFonts.montserrat(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.right,
+              ),
             ),
+            const SizedBox(width: 12),
+            onTap == null
+                ? const SizedBox.shrink()
+                : InkWell(
+                    onTap: onTap,
+                    child: Icon(
+                      MdiIcons.pencil,
+                      color: colorPrimary,
+                      size: 20,
+                    ),
+                  ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> uploadAvatarProfile(XFile? imageFile) async {
+    log("start upload");
+    if (imageFile != null) {
+      log("You selected  image : ${imageFile.path}");
+      //! upload file to server
+      await showLoading();
+      File compressedFile = await FlutterNativeImage.compressImage(imageFile.path);
+
+      final response = await ApiConnect.instance.uploadFile(
+        EndPoint.uploadAvatar,
+        "avatar",
+        compressedFile.path,
+        {
+          'hash_user': await getPrefrence(HASH_USER) ?? "",
+          'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
+        },
+      );
+
+      dismissLoading();
+
+      if (response != null) {
+        if (response['success']) {
+          final data = response['data'];
+
+          await setPrefrence(FOTO, data['avatar']);
+          foto = await getPrefrence(FOTO) ?? "";
+
+          if (mounted) {
+            setState(() {});
+          }
+        }
+        showToast(response['message'].toString());
+      }
+    } else {
+      log("You have not taken image");
+    }
   }
 }

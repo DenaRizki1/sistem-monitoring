@@ -1,9 +1,17 @@
+import 'dart:isolate';
+
+import 'package:absentip/utils/my_custom_timeago_messages.dart';
+import 'package:absentip/utils/constants.dart';
+import 'package:absentip/utils/sessions.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../../firebase_options.dart';
+import '../firebase_options.dart';
 import 'push_notification_service.dart';
+
+import 'package:timeago/timeago.dart' as timeago;
 
 class DependecyInjection {
   static Future<void> init() async {
@@ -12,16 +20,31 @@ class DependecyInjection {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    // PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    timeago.setLocaleMessages('id', MyCustomTimeagoMessages());
 
-    // String version = packageInfo.version;
-    // String buildNumber = packageInfo.buildNumber;
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-    // await box.write(KeySession.VERSION, version);
-    // await box.write(KeySession.BUILD_NUMBER, buildNumber);
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
 
-    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-    final pushNotificationService = PushNotificationService(firebaseMessaging);
+    setPrefrence(VERSION, version);
+    setPrefrence(BUILD_NUMBER, buildNumber);
+
+    final pushNotificationService = PushNotificationService();
     pushNotificationService.initialise();
+
+    // Plugin must be initialized before using
+    await FlutterDownloader.initialize(
+      debug: true, // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl: true, // option: set to false to disable working with http links (default: false)
+    );
+
+    await FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String taskId, DownloadTaskStatus status, int progress) {
+    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    send.send([taskId, status, progress]);
   }
 }
