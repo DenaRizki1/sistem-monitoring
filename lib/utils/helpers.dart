@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
-import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,11 +13,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:connectivity/connectivity.dart';
 import 'dart:math' as math;
 
 import 'package:url_launcher/url_launcher_string.dart';
@@ -334,5 +330,58 @@ Future<bool> openUrl(String? url, {LaunchMode launchMode = LaunchMode.externalAp
   } else {
     showToast("Url tidak valid");
     return false;
+  }
+}
+
+Widget itemDetail(bool isColor, String title, String value) {
+  return Container(
+    color: isColor ? AppColor.biru.withAlpha(50) : Colors.white,
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 13,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 1,
+          child: Text(
+            value,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Color colorStatusAbsen(String statusAbsen) {
+  switch (statusAbsen) {
+    case "1":
+      return Colors.red;
+    case "2":
+      return Colors.blue;
+    case "3":
+      return Colors.orange;
+    case "4":
+      return Colors.green;
+    case "5":
+      return Colors.grey;
+    default:
+      return Colors.black;
   }
 }

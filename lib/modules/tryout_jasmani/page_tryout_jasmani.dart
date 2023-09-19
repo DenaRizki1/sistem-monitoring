@@ -3,7 +3,7 @@ import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
 import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/page_jadwal_detail.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_detail.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/constants.dart';
 import 'package:absentip/utils/helpers.dart';
@@ -16,18 +16,18 @@ import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PageJadwal extends StatefulWidget {
-  const PageJadwal({Key? key}) : super(key: key);
+class PageTryoutJasmani extends StatefulWidget {
+  const PageTryoutJasmani({Key? key}) : super(key: key);
 
   @override
-  State<PageJadwal> createState() => _PageJadwalState();
+  State<PageTryoutJasmani> createState() => _PageTryoutJasmaniState();
 }
 
-class _PageJadwalState extends State<PageJadwal> {
+class _PageTryoutJasmaniState extends State<PageTryoutJasmani> {
   final _apiResponse = ApiResponse();
   final _refreshC = RefreshController();
   final _listKegiatan = [];
-  DateTime _filterDate = DateTime.now();
+  DateTime? _filterDate;
 
   @override
   void initState() {
@@ -50,12 +50,12 @@ class _PageJadwalState extends State<PageJadwal> {
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.jadwalPengajar,
+      url: EndPoint.tryoutJasmani,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
-        'tahun': parseDateInd(_filterDate.toString(), "yyyy"),
-        'bulan': parseDateInd(_filterDate.toString(), "MM"),
+        'tahun': _filterDate == null ? "" : parseDateInd(_filterDate.toString(), "yyyy"),
+        'bulan': _filterDate == null ? "" : parseDateInd(_filterDate.toString(), "MM"),
       },
     );
 
@@ -92,7 +92,7 @@ class _PageJadwalState extends State<PageJadwal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget("Jadwal Pengajar", leading: null),
+      appBar: appBarWidget("Tryout Jasmani"),
       body: Stack(
         children: [
           SizedBox(
@@ -103,20 +103,6 @@ class _PageJadwalState extends State<PageJadwal> {
               fit: BoxFit.cover,
             ),
           ),
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColor.biru2,
-                  AppColor.biru2.withOpacity(0.6),
-                  Colors.white.withOpacity(0.1),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -124,12 +110,6 @@ class _PageJadwalState extends State<PageJadwal> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
                   onPressed: () {
                     showMonthPicker(
                       headerColor: AppColor.biru2,
@@ -149,13 +129,13 @@ class _PageJadwalState extends State<PageJadwal> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(MdiIcons.calendar, color: Colors.black, size: 16),
+                      Icon(MdiIcons.calendar, color: Colors.white, size: 16),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          parseDateInd(_filterDate.toString(), "MMMM yyyy"),
+                          _filterDate == null ? "Semua Tryout" : parseDateInd(_filterDate.toString(), "MMMM yyyy"),
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -195,8 +175,8 @@ class _PageJadwalState extends State<PageJadwal> {
                                 onTap: () {
                                   AppNavigator.instance.push(
                                     MaterialPageRoute(
-                                      builder: (context) => PageJadwalDetail(
-                                        tglJadwal: kegiatan['tgl_pegawai_jadwal'].toString(),
+                                      builder: (context) => PageTryoutJasmaniDetail(
+                                        kdTryout: kegiatan['kd_tryout'].toString(),
                                       ),
                                     ),
                                   );
@@ -211,7 +191,7 @@ class _PageJadwalState extends State<PageJadwal> {
                                         color: AppColor.hitam.withAlpha(200),
                                       ),
                                       child: Text(
-                                        parseDateInd(kegiatan['tgl_pegawai_jadwal'].toString(), "dd MMM yyyy"),
+                                        parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy"),
                                         style: GoogleFonts.montserrat(
                                           color: Colors.white,
                                           fontSize: 13,
@@ -226,7 +206,7 @@ class _PageJadwalState extends State<PageJadwal> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            kegiatan['nama_jadwal'].toString(),
+                                            kegiatan['nama_tryout'].toString(),
                                             style: GoogleFonts.montserrat(
                                               color: Colors.black,
                                               fontSize: 15,
@@ -237,13 +217,35 @@ class _PageJadwalState extends State<PageJadwal> {
                                           ),
                                           const SizedBox(height: 6),
                                           Text(
-                                            "Pukul " + parseDateInd(kegiatan['jam_masuk'].toString(), "HH:mm") + " s/d " + parseDateInd(kegiatan['jam_pulang'].toString(), "HH:mm") + " WIB",
+                                            "Pukul " + parseDateInd(kegiatan['waktu_mulai'].toString(), "HH:mm") + " s/d " + parseDateInd(kegiatan['waktu_selesai'].toString(), "HH:mm") + " WIB",
                                             style: GoogleFonts.montserrat(
                                               color: Colors.black,
                                               fontSize: 14,
                                               fontWeight: FontWeight.normal,
                                             ),
                                           ),
+                                          const SizedBox(height: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: colorStatusAbsen(kegiatan['status_absen'].toString()).withAlpha(40),
+                                              border: Border.all(
+                                                width: 1,
+                                                color: colorStatusAbsen(kegiatan['status_absen'].toString()),
+                                              ),
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: Text(
+                                              kegiatan['ket_status_absen'].toString(),
+                                              style: GoogleFonts.montserrat(
+                                                color: colorStatusAbsen(kegiatan['status_absen'].toString()),
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),

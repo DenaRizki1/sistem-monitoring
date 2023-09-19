@@ -1,12 +1,15 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/model/key_value_model.dart';
+import 'package:absentip/modules/absen/dialog_konfirmasi_absen.dart';
 import 'package:absentip/services/location_service.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:absentip/utils/sessions.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:flutx/flutx.dart';
@@ -36,6 +39,7 @@ class PageAbsenFoto extends StatefulWidget {
 }
 
 class _PageAbsenFotoState extends State<PageAbsenFoto> {
+  KeyValueModel? _selectedJadwal;
   Map _cekAbsen = {};
   String _filePath = "";
   // ignore: unused_field
@@ -54,6 +58,28 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
     });
 
     super.initState();
+  }
+
+  Future<List<KeyValueModel>> getJadwalHarian() async {
+    final response = await ApiConnect.instance.request(
+      requestMethod: RequestMethod.post,
+      url: EndPoint.jadwalAbsenHarian,
+      params: {
+        'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
+        'hash_user': await getPrefrence(HASH_USER) ?? "",
+      },
+    );
+
+    if (response != null) {
+      if (response['success'] == true) {
+        List data = response['data'];
+        return data.map((e) => KeyValueModel(key: e['kd_jadwal_absen'].toString(), value: e['nama_jadwal'].toString())).toList();
+      } else {
+        showToast(response['message'].toString());
+      }
+    }
+
+    return [];
   }
 
   Future<void> imageSelector(BuildContext context, String pickerType) async {
@@ -162,7 +188,44 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
     }
   }
 
-  Future<void> simpanAbsen(String idLokasiAbsen) async {
+  Future<void> lokasiAbsenLuarKelas() async {
+    await showLoading();
+
+    final dateTime = DateTime.now();
+    final pref = await SharedPreferences.getInstance();
+    final response = await ApiConnect.instance.request(
+      requestMethod: RequestMethod.post,
+      url: EndPoint.lokasiAbsenLuarKelas,
+      params: {
+        'token_auth': pref.getString(TOKEN_AUTH).toString(),
+        'hash_user': pref.getString(HASH_USER).toString(),
+        'time_zone_name': dateTime.timeZoneName,
+        'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
+        'lat': _cekAbsen['lat']?.toString() ?? '0',
+        'long': _cekAbsen['lng']?.toString() ?? '0',
+      },
+    );
+
+    dismissLoading();
+
+    if (response != null) {
+      if (response['success']) {
+        List listLokasi = response['data'];
+        if (listLokasi.length > 1) {
+          final idLokasi = await showDialog<String>(context: context, builder: (context) => DialogKonfirmasiAbsen(listLokasi: response['data']));
+          if (idLokasi != null) {
+            simpanAbsen(idLokasi);
+          }
+        } else {
+          simpanAbsen(listLokasi.first['id_branch'].toString());
+        }
+      } else {
+        showDialog(context: context, builder: (context) => AlertDialogOkWidget(message: response['message'].toString()));
+      }
+    }
+  }
+
+  Future<void> simpanAbsen(String idLokasi) async {
     await showLoading();
 
     double latitude = 0.0;
@@ -207,7 +270,7 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
 
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.uploadFile(
-      EndPoint.simpanAbsen,
+      _cekAbsen['jenis_absen'].toString() == "1" ? EndPoint.simpanAbsen : EndPoint.simpanAbsenLuarkelas,
       "foto",
       resultPath,
       {
@@ -216,7 +279,9 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
         'status_absen': _cekAbsen['status_absen'].toString(), // 1 = Masuk | 2 = Pulang
-        'jenis_absen': _cekAbsen['jenis_absen'].toString(),
+        'jenis_absen': _cekAbsen['jenis_absen'].toString(), // 1 = kelas |  2 = Luar Kelas
+        'id_lokasi': idLokasi,
+        'kd_jadwal': _selectedJadwal!.key.toString(),
         'kd_tanda': _cekAbsen['kd_tanda']?.toString() ?? "",
         'lat': _cekAbsen['lat']?.toString() ?? '0',
         'long': _cekAbsen['lng']?.toString() ?? '0',
@@ -248,7 +313,7 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
 
   @override
   Widget build(BuildContext context) {
-    log("build AbsenFotoPage");
+    log("PageAbsenFotoTetap");
     return Scaffold(
       appBar: appBarWidget(_title),
       body: Stack(
@@ -265,7 +330,7 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
               const SizedBox(height: 12),
-              const LabelForm(label: "Foto Selfie", fontSize: 14, isRequired: true),
+              const LabelForm(label: "Foto Selfie", isRequired: true),
               const SizedBox(height: 4),
               FxContainer.bordered(
                 width: double.infinity,
@@ -352,14 +417,46 @@ class _PageAbsenFotoState extends State<PageAbsenFoto> {
                   ],
                 ),
               ),
+              const SizedBox(height: 12),
+              const LabelForm(label: "Shift", isRequired: true),
+              const SizedBox(height: 4),
+              DropdownSearch<KeyValueModel>(
+                asyncItems: (text) => getJadwalHarian(),
+                itemAsString: (item) => item.value,
+                popupProps: PopupProps.menu(
+                  showSearchBox: true,
+                  menuProps: const MenuProps(),
+                  searchFieldProps: TextFieldProps(
+                    decoration: textFieldDecoration(
+                      textHint: "Cari Shift",
+                    ),
+                  ),
+                  loadingBuilder: (context, searchEntry) => loadingWidget(),
+                ),
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: textFieldDecoration(
+                    textHint: "Pilih Shift",
+                  ),
+                ),
+                selectedItem: _selectedJadwal,
+                onChanged: (item) {
+                  _selectedJadwal = item;
+                },
+              ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_filePath.isEmpty) {
                       showToast("Foto tidak boleh kosong");
+                    } else if (_selectedJadwal == null) {
+                      showToast("Shitf tidak boleh kosong");
                     } else {
-                      simpanAbsen("");
+                      if (_cekAbsen['jenis_absen'].toString() == "1") {
+                        simpanAbsen("");
+                      } else {
+                        lokasiAbsenLuarKelas();
+                      }
                     }
                   },
                   child: const Text(

@@ -28,6 +28,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:timer_builder/timer_builder.dart';
 
@@ -45,6 +46,7 @@ class _PageAbsenState extends State<PageAbsen> {
   String lokasiAbsen = "";
   Position? _currentLocation;
   Map _cekAbsen = {};
+  bool _enableCuti = false;
 
   @override
   void dispose() {
@@ -55,6 +57,10 @@ class _PageAbsenState extends State<PageAbsen> {
   @override
   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((value) {
+      String statusPegawai = value.getString(STATUS_PEGAWAI) ?? "";
+      _enableCuti = statusPegawai.toLowerCase() == "tetap" || statusPegawai.toLowerCase() == "kontrak";
+    });
     cekAbsen("1");
     getCurrentLocation();
   }
@@ -129,6 +135,7 @@ class _PageAbsenState extends State<PageAbsen> {
 
   @override
   Widget build(BuildContext context) {
+    log("PageAbsenTetap");
     return Scaffold(
       backgroundColor: Colors.white,
       body: SmartRefresher(
@@ -318,6 +325,7 @@ class _PageAbsenState extends State<PageAbsen> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
@@ -383,7 +391,16 @@ class _PageAbsenState extends State<PageAbsen> {
                               _cekAbsen['lat'] = latitude.toString();
                               _cekAbsen['lng'] = longitude.toString();
                               _cekAbsen['lokasi'] = _address;
-                              showPilihanAbsen(context);
+                              // showPilihanAbsen(context);
+                              Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PageAbsenFoto(cekAbsen: _cekAbsen),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => cekAbsen("1"),
+                                  );
                             } else {
                               showToast("Lokasi Anda Belum Ditemukan");
                             }
@@ -420,96 +437,104 @@ class _PageAbsenState extends State<PageAbsen> {
                       ),
                       const SizedBox(height: 20),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
                           children: [
                             Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  if (_cekAbsen['enable_izin'] ?? false) {
-                                    if (_address.isNotEmpty) {
-                                      _cekAbsen['lat'] = latitude.toString();
-                                      _cekAbsen['lng'] = longitude.toString();
-                                      _cekAbsen['lokasi'] = _address;
-                                      Navigator.of(context)
-                                          .push(
-                                            MaterialPageRoute(
-                                              builder: (context) => PagePermintaanIzin(cekAbsen: _cekAbsen),
-                                            ),
-                                          )
-                                          .then((value) => cekAbsen("1"));
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    if (_cekAbsen['enable_izin'] ?? false) {
+                                      if (_address.isNotEmpty) {
+                                        _cekAbsen['lat'] = latitude.toString();
+                                        _cekAbsen['lng'] = longitude.toString();
+                                        _cekAbsen['lokasi'] = _address;
+                                        Navigator.of(context)
+                                            .push(
+                                              MaterialPageRoute(
+                                                builder: (context) => PagePermintaanIzin(cekAbsen: _cekAbsen),
+                                              ),
+                                            )
+                                            .then((value) => cekAbsen("1"));
+                                      } else {
+                                        showToast("Lokasi Anda Belum Ditemukan");
+                                      }
                                     } else {
-                                      showToast("Lokasi Anda Belum Ditemukan");
+                                      showToast(_cekAbsen['text_izin'].toString());
                                     }
-                                  } else {
-                                    showToast(_cekAbsen['text_izin'].toString());
-                                  }
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: colorPrimary,
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: colorPrimary,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.0),
                                     ),
-                                    borderRadius: BorderRadius.circular(16.0),
+                                    side: BorderSide(
+                                      width: 2.0,
+                                      color: colorPrimary,
+                                      style: BorderStyle.solid,
+                                    ),
                                   ),
-                                  side: BorderSide(
-                                    width: 2.0,
-                                    color: colorPrimary,
-                                    style: BorderStyle.solid,
-                                  ),
-                                ),
-                                child: Text(
-                                  "Permintaan Izin",
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 16,
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.w500,
+                                  child: Text(
+                                    "+ Izin",
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 16,
+                                      color: colorPrimary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  if (_cekAbsen['enable_cuti'] ?? false) {
-                                    if (_address.isNotEmpty) {
-                                      _cekAbsen['lat'] = latitude.toString();
-                                      _cekAbsen['lng'] = longitude.toString();
-                                      _cekAbsen['lokasi'] = _address;
-                                      Navigator.of(context)
-                                          .push(
-                                            MaterialPageRoute(
-                                              builder: (context) => PagePermintaanCuti(cekAbsen: _cekAbsen),
-                                            ),
-                                          )
-                                          .then((value) => cekAbsen("1"));
-                                    } else {
-                                      showToast("Lokasi Anda Belum Ditemukan");
-                                    }
-                                  } else {
-                                    showToast(_cekAbsen['text_cuti'].toString());
-                                  }
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: colorPrimary,
+                            Visibility(
+                              visible: _enableCuti,
+                              child: Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      if (_cekAbsen['enable_cuti'] ?? false) {
+                                        if (_address.isNotEmpty) {
+                                          _cekAbsen['lat'] = latitude.toString();
+                                          _cekAbsen['lng'] = longitude.toString();
+                                          _cekAbsen['lokasi'] = _address;
+                                          Navigator.of(context)
+                                              .push(
+                                                MaterialPageRoute(
+                                                  builder: (context) => PagePermintaanCuti(cekAbsen: _cekAbsen),
+                                                ),
+                                              )
+                                              .then((value) => cekAbsen("1"));
+                                        } else {
+                                          showToast("Lokasi Anda Belum Ditemukan");
+                                        }
+                                      } else {
+                                        showToast(_cekAbsen['text_cuti'].toString());
+                                      }
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                          color: colorPrimary,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16.0),
+                                      ),
+                                      side: BorderSide(
+                                        width: 2,
+                                        color: colorPrimary,
+                                        style: BorderStyle.solid,
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
-                                  side: BorderSide(
-                                    width: 2,
-                                    color: colorPrimary,
-                                    style: BorderStyle.solid,
-                                  ),
-                                ),
-                                child: Text(
-                                  "Permintaan Cuti",
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 16,
-                                    color: colorPrimary,
-                                    fontWeight: FontWeight.w500,
+                                    child: Text(
+                                      "+ Cuti",
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 16,
+                                        color: colorPrimary,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

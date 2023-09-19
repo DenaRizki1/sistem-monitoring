@@ -3,7 +3,7 @@ import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
 import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/modules/kegiatan/page_kegiatan_detail.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_detail.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/constants.dart';
 import 'package:absentip/utils/helpers.dart';
@@ -16,18 +16,18 @@ import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PageKegiatan extends StatefulWidget {
-  const PageKegiatan({Key? key}) : super(key: key);
+class PageTryoutAkademik extends StatefulWidget {
+  const PageTryoutAkademik({Key? key}) : super(key: key);
 
   @override
-  State<PageKegiatan> createState() => _PageKegiatanState();
+  State<PageTryoutAkademik> createState() => _PageTryoutAkademikState();
 }
 
-class _PageKegiatanState extends State<PageKegiatan> {
+class _PageTryoutAkademikState extends State<PageTryoutAkademik> {
   final _apiResponse = ApiResponse();
   final _refreshC = RefreshController();
   final _listKegiatan = [];
-  DateTime _filterDate = DateTime.now();
+  DateTime? _filterDate;
 
   @override
   void initState() {
@@ -50,12 +50,12 @@ class _PageKegiatanState extends State<PageKegiatan> {
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.kegiatan,
+      url: EndPoint.tryoutAkademik,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
-        'tahun': parseDateInd(_filterDate.toString(), "yyyy"),
-        'bulan': parseDateInd(_filterDate.toString(), "MM"),
+        'tahun': _filterDate == null ? "" : parseDateInd(_filterDate.toString(), "yyyy"),
+        'bulan': _filterDate == null ? "" : parseDateInd(_filterDate.toString(), "MM"),
       },
     );
 
@@ -92,7 +92,7 @@ class _PageKegiatanState extends State<PageKegiatan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget("Jadwal Kegiatan", leading: null),
+      appBar: appBarWidget("Tryout Akademik"),
       body: Stack(
         children: [
           SizedBox(
@@ -103,20 +103,6 @@ class _PageKegiatanState extends State<PageKegiatan> {
               fit: BoxFit.cover,
             ),
           ),
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColor.biru2,
-                  AppColor.biru2.withOpacity(0.6),
-                  Colors.white.withOpacity(0.1),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -124,12 +110,6 @@ class _PageKegiatanState extends State<PageKegiatan> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
                   onPressed: () {
                     showMonthPicker(
                       headerColor: AppColor.biru2,
@@ -149,13 +129,13 @@ class _PageKegiatanState extends State<PageKegiatan> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(MdiIcons.calendar, color: Colors.black, size: 16),
+                      Icon(MdiIcons.calendar, color: Colors.white, size: 16),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          parseDateInd(_filterDate.toString(), "MMMM yyyy"),
+                          _filterDate == null ? "Semua Tryout" : parseDateInd(_filterDate.toString(), "MMMM yyyy"),
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -181,7 +161,7 @@ class _PageKegiatanState extends State<PageKegiatan> {
                           itemCount: _listKegiatan.length,
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(bottom: 36),
+                          padding: const EdgeInsets.only(bottom: 12),
                           itemBuilder: (context, index) {
                             Map kegiatan = _listKegiatan[index];
                             return Card(
@@ -193,17 +173,13 @@ class _PageKegiatanState extends State<PageKegiatan> {
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  AppNavigator.instance
-                                      .push(
-                                        MaterialPageRoute(
-                                          builder: (context) => PageKegiatanDetail(
-                                            kdPegawaiJadwal: kegiatan['kd_pegawai_jadwal'].toString(),
-                                          ),
-                                        ),
-                                      )
-                                      .then(
-                                        (value) => getKegiatan(),
-                                      );
+                                  AppNavigator.instance.push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PageTryoutJasmaniDetail(
+                                        kdTryout: kegiatan['kd_tryout'].toString(),
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: Column(
                                   children: [
@@ -215,7 +191,7 @@ class _PageKegiatanState extends State<PageKegiatan> {
                                         color: AppColor.hitam.withAlpha(200),
                                       ),
                                       child: Text(
-                                        parseDateInd(kegiatan['tgl_pegawai_jadwal'].toString(), "dd MMM yyyy"),
+                                        parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy"),
                                         style: GoogleFonts.montserrat(
                                           color: Colors.white,
                                           fontSize: 13,
@@ -230,7 +206,7 @@ class _PageKegiatanState extends State<PageKegiatan> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            kegiatan['nama_jadwal'].toString(),
+                                            kegiatan['nama_tryout'].toString(),
                                             style: GoogleFonts.montserrat(
                                               color: Colors.black,
                                               fontSize: 15,
@@ -241,7 +217,7 @@ class _PageKegiatanState extends State<PageKegiatan> {
                                           ),
                                           const SizedBox(height: 6),
                                           Text(
-                                            "Pukul " + parseDateInd(kegiatan['jam_masuk'].toString(), "HH:mm") + " s/d " + parseDateInd(kegiatan['jam_pulang'].toString(), "HH:mm") + " WIB",
+                                            "Pukul " + parseDateInd(kegiatan['waktu_mulai'].toString(), "HH:mm") + " s/d " + parseDateInd(kegiatan['waktu_selesai'].toString(), "HH:mm") + " WIB",
                                             style: GoogleFonts.montserrat(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -269,7 +245,7 @@ class _PageKegiatanState extends State<PageKegiatan> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),

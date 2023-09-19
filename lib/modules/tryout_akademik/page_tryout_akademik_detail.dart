@@ -1,9 +1,19 @@
-import 'package:absentip/modules/kegiatan/page_kegiatan_foto.dart';
-import 'package:absentip/modules/kegiatan/page_kegiatan_scan.dart';
+import 'package:absentip/data/apis/api_connect.dart';
+import 'package:absentip/data/apis/api_response.dart';
+import 'package:absentip/data/apis/end_point.dart';
+import 'package:absentip/data/enums/api_status.dart';
+import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_foto.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_scan.dart';
+import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
+import 'package:absentip/utils/constants.dart';
+import 'package:absentip/utils/helpers.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
 import 'package:absentip/wigets/alert_dialog_ok_widget.dart';
+import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:absentip/wigets/label_form.dart';
+import 'package:absentip/wigets/show_image_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -11,28 +21,16 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:absentip/data/apis/api_connect.dart';
-import 'package:absentip/data/apis/api_response.dart';
-import 'package:absentip/data/apis/end_point.dart';
-import 'package:absentip/data/enums/api_status.dart';
-import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/utils/app_color.dart';
-import 'package:absentip/utils/constants.dart';
-import 'package:absentip/utils/helpers.dart';
-import 'package:absentip/wigets/appbar_widget.dart';
+class PageTryoutAkademikDetail extends StatefulWidget {
+  final String kdTryout;
 
-import '../../wigets/show_image_page.dart';
-
-class PageKegiatanDetail extends StatefulWidget {
-  final String kdPegawaiJadwal;
-
-  const PageKegiatanDetail({Key? key, required this.kdPegawaiJadwal}) : super(key: key);
+  const PageTryoutAkademikDetail({Key? key, required this.kdTryout}) : super(key: key);
 
   @override
-  State<PageKegiatanDetail> createState() => _PageKegiatanDetailState();
+  State<PageTryoutAkademikDetail> createState() => _PageTryoutAkademikDetailState();
 }
 
-class _PageKegiatanDetailState extends State<PageKegiatanDetail> {
+class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
   final _apiResponse = ApiResponse();
   final _refreshC = RefreshController();
 
@@ -56,11 +54,11 @@ class _PageKegiatanDetailState extends State<PageKegiatanDetail> {
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.kegiatanDetail,
+      url: EndPoint.tryoutDetailJasmani,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
-        'kd_pegawai_jadwal': widget.kdPegawaiJadwal,
+        'kd_tryout': widget.kdTryout,
       },
     );
 
@@ -194,22 +192,6 @@ class _PageKegiatanDetailState extends State<PageKegiatanDetail> {
                                       child: const Text('Lihat Lokasi Map'),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        AppNavigator.instance.push(
-                                          MaterialPageRoute(
-                                            builder: (context) => ShowImagePage(
-                                              judul: "QR Jadwal",
-                                              url: kegiatan['qr_jadwal'].toString(),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('Lihat QR Jadwal'),
-                                    ),
-                                  ),
                                   Visibility(
                                     visible: kegiatan['visible_absen'] ?? false,
                                     child: SizedBox(
@@ -270,7 +252,7 @@ class _PageKegiatanDetailState extends State<PageKegiatanDetail> {
     );
   }
 
-  void pilihMetodeAbsen(Map dataKegiatan) {
+  void pilihMetodeAbsen(Map dataTryout) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -295,7 +277,7 @@ class _PageKegiatanDetailState extends State<PageKegiatanDetail> {
                   AppNavigator.instance.pop();
                   AppNavigator.instance
                       .push(MaterialPageRoute(
-                        builder: (context) => PageKegiatanFoto(kegiatan: dataKegiatan),
+                        builder: (context) => PageTryoutJasmaniFoto(tryout: dataTryout),
                       ))
                       .then(
                         (value) => getKegiatan(),
@@ -309,7 +291,7 @@ class _PageKegiatanDetailState extends State<PageKegiatanDetail> {
                   AppNavigator.instance.pop();
                   AppNavigator.instance
                       .push(MaterialPageRoute(
-                        builder: (context) => PageKegiatanScan(kegiatan: dataKegiatan),
+                        builder: (context) => PageTryoutJasmaniScan(tryout: dataTryout),
                       ))
                       .then(
                         (value) => getKegiatan(),

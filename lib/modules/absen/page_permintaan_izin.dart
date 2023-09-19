@@ -420,6 +420,7 @@ class _PagePermintaanIzinState extends State<PagePermintaanIzin> {
                   } else if (_keteranganC.text.isEmpty) {
                     showToast("Keterangan tidak boleh kosong");
                   } else {
+                    dismissKeyboard();
                     final result = await showDialog<bool>(
                       context: context,
                       builder: (context) => const AlertDialogConfirmWidget(message: "Apakah data yang anda masukan sudah benar?"),

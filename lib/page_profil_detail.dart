@@ -102,6 +102,8 @@ class _PageProfilDetailState extends State<PageProfilDetail> {
                         },
                         errorBuilder: (context, error, stackTrace) => Image.asset(
                           AppImages.logoGold,
+                          width: 140,
+                          height: 140,
                         ),
                       ).image,
                     ),

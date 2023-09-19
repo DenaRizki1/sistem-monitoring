@@ -37,7 +37,7 @@ class _PageAbsenScanState extends State<PageAbsenScan> {
     super.dispose();
   }
 
-  Future<void> simpanAbsen() async {
+  Future<void> simpanAbsen(String barcodeJadwal) async {
     await showLoading(dismissOnTap: false);
 
     DateTime dateTime = DateTime.now();
@@ -55,6 +55,7 @@ class _PageAbsenScanState extends State<PageAbsenScan> {
         'long': widget.cekAbsen['lng'].toString(),
         'status_absen': widget.cekAbsen['status_absen'].toString(),
         'kd_tanda': widget.cekAbsen['kd_tanda'].toString(),
+        'jadwal': barcodeJadwal,
       },
     );
 
@@ -119,7 +120,7 @@ class _PageAbsenScanState extends State<PageAbsenScan> {
           ),
         );
         if (result ?? false) {
-          simpanAbsen();
+          simpanAbsen(barcode);
         }
       } else {
         switch (response['code'].toString()) {
@@ -149,6 +150,7 @@ class _PageAbsenScanState extends State<PageAbsenScan> {
 
   @override
   Widget build(BuildContext context) {
+    log("PageAbsenScanTetap");
     return Scaffold(
       appBar: appBarWidget("Scan QR Code"),
       body: SizedBox(

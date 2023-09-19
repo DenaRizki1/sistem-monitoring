@@ -3,7 +3,7 @@ import 'package:absentip/page_splashscreen.dart';
 import 'package:absentip/services/dependency_injection.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
-import 'package:calendar_view/calendar_view.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,26 +14,27 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DependecyInjection.init();
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (context) => MainProvider(),
+  runApp(
+    //   MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(
+    //       create: (context) => MainProvider(),
+    //     ),
+    //   ],
+    //   child: const MyApp(),
+    // )
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => MainProvider(),
+          ),
+        ],
+        child: const MyApp(), // Wrap your app
       ),
-    ],
-    child: const MyApp(),
-  )
-      // DevicePreview(
-      //   enabled: !kReleaseMode,
-      //   builder: (context) => MultiProvider(
-      //     providers: [
-      //       ChangeNotifierProvider(
-      //         create: (context) => MainProvider(),
-      //       ),
-      //     ],
-      //     child: const MyApp(), // Wrap your app
-      //   ),
-      // ),
-      );
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

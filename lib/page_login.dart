@@ -214,6 +214,9 @@ class _PageLoginState extends State<PageLogin> {
         prefs.setString(NOTLP, data['notlp'].toString());
         prefs.setString(ALAMAT, data['alamat'].toString());
         prefs.setString(FOTO, data['foto'].toString());
+        prefs.setString(ID_JABATAN, data['id_jabatan'].toString());
+        prefs.setString(JABATAN, data['jabatan'].toString());
+        prefs.setString(STATUS_PEGAWAI, data['status_pegawai'].toString());
         prefs.setString(PASSWORD, password);
 
         AppNavigator.instance.pushAndRemoveUntil(

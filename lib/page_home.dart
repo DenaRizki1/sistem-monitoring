@@ -1,16 +1,17 @@
 import 'package:absentip/data/provider/main_provider.dart';
+import 'package:absentip/modules/kegiatan/page_kegiatan.dart';
 import 'package:absentip/modules/notifikasi/page_notification.dart';
 import 'package:absentip/page_beranda.dart';
-import 'package:absentip/page_jadwal.dart';
 import 'package:absentip/page_profil.dart';
 import 'package:absentip/utils/app_color.dart';
+import 'package:absentip/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'modules/absen/page_absen.dart';
-import 'utils/my_colors.dart';
 
 class PageHome extends StatefulWidget {
   const PageHome({Key? key}) : super(key: key);
@@ -65,7 +66,7 @@ class _PageHomeState extends State<PageHome> {
               onPageChanged: mainProvider.setCurrentIndex,
               children: const [
                 PageBeranda(),
-                PageJadwal(),
+                PageKegiatan(),
                 PageAbsen(),
                 PageNotification(),
                 PageProfil(),

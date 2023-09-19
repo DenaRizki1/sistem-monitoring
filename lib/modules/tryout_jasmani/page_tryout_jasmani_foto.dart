@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 import 'dart:io';
 
@@ -25,28 +24,28 @@ import 'package:absentip/wigets/alert_dialog_ok_widget.dart';
 import 'package:absentip/wigets/label_form.dart';
 import 'package:absentip/wigets/show_image_page.dart';
 
-class PageKegiatanFoto extends StatefulWidget {
-  final Map kegiatan;
+class PageTryoutJasmaniFoto extends StatefulWidget {
+  final Map tryout;
 
-  const PageKegiatanFoto({Key? key, required this.kegiatan}) : super(key: key);
+  const PageTryoutJasmaniFoto({Key? key, required this.tryout}) : super(key: key);
 
   @override
-  State<PageKegiatanFoto> createState() => _PageKegiatanFotoState();
+  State<PageTryoutJasmaniFoto> createState() => _PageTryoutJasmaniFotoState();
 }
 
-class _PageKegiatanFotoState extends State<PageKegiatanFoto> {
-  Map _kegiatan = {};
+class _PageTryoutJasmaniFotoState extends State<PageTryoutJasmaniFoto> {
+  Map _tryout = {};
   String _filePath = "";
   String _title = "";
 
   @override
   void initState() {
-    _kegiatan = widget.kegiatan;
+    _tryout = widget.tryout;
 
-    log(_kegiatan.toString());
+    log(_tryout.toString());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        _title = _kegiatan['text_absen']?.toString() ?? "";
+        _title = _tryout['nama_tryout']?.toString() ?? "";
       });
     });
 
@@ -157,7 +156,7 @@ class _PageKegiatanFotoState extends State<PageKegiatanFoto> {
     }
   }
 
-  Future<void> simpanAbsen() async {
+  Future<void> simpanAbsen(String idLokasiAbsen) async {
     await showLoading();
 
     double latitude = 0.0;
@@ -202,7 +201,7 @@ class _PageKegiatanFotoState extends State<PageKegiatanFoto> {
 
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.uploadFile(
-      EndPoint.simpanAbsenKegiatan,
+      EndPoint.simpanAbsenTryoutJasmani,
       "foto",
       resultPath,
       {
@@ -210,9 +209,9 @@ class _PageKegiatanFotoState extends State<PageKegiatanFoto> {
         'hash_user': pref.getString(HASH_USER).toString(),
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
-        'kd_pegawai_jadwal': _kegiatan['kd_pegawai_jadwal'].toString(),
-        'status_absen': _kegiatan['status_absen'].toString(),
-        'kd_tanda': _kegiatan['kd_tanda'].toString(),
+        'kd_tryout': _tryout['kd_tryout'].toString(),
+        'status_absen': _tryout['status_absen'].toString(),
+        'kd_tanda': _tryout['kd_tanda'].toString(),
         'lat': latitude.toString(),
         'long': longitude.toString(),
       },
@@ -353,7 +352,7 @@ class _PageKegiatanFotoState extends State<PageKegiatanFoto> {
                     if (_filePath.isEmpty) {
                       showToast("Foto tidak boleh kosong");
                     } else {
-                      simpanAbsen();
+                      simpanAbsen("");
                     }
                   },
                   child: const Text(

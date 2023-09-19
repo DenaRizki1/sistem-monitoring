@@ -8,6 +8,5 @@ String getBasicAuth() {
 }
 
 String getBaseUrl() {
-  // return "https://keuangan.tacticalinpolice.com/apipengajar_v1";
-  return "https://api.tacticalinpolice.com/tip5/apipengajar_v1";
+  return "https://api.tacticalinpolice.com/tip5/pengajartip/v1";
 }

@@ -15,21 +15,21 @@ import 'package:geocoding/geocoding.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PageKegiatanScan extends StatefulWidget {
-  final Map kegiatan;
-  const PageKegiatanScan({Key? key, required this.kegiatan}) : super(key: key);
+class PageTryoutPsikologiScan extends StatefulWidget {
+  final Map tryout;
+  const PageTryoutPsikologiScan({Key? key, required this.tryout}) : super(key: key);
 
   @override
-  State<PageKegiatanScan> createState() => _PageKegiatanScanState();
+  State<PageTryoutPsikologiScan> createState() => _PageTryoutPsikologiScanState();
 }
 
-class _PageKegiatanScanState extends State<PageKegiatanScan> {
+class _PageTryoutPsikologiScanState extends State<PageTryoutPsikologiScan> {
   final scanC = MobileScannerController();
-  Map _kegiatan = {};
+  Map _tryout = {};
 
   @override
   void initState() {
-    _kegiatan = widget.kegiatan;
+    _tryout = widget.tryout;
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     super.initState();
   }
@@ -40,18 +40,16 @@ class _PageKegiatanScanState extends State<PageKegiatanScan> {
     super.dispose();
   }
 
-  Future<void> cekKegiatan(Map kegiatan) async {
+  Future<Map?> cekKegiatan() async {
     showLoading();
 
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.cekKegiatan,
+      url: EndPoint.cekTryoutJasmani,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
-        'kd_pegawai_jadwal': kegiatan['kd_pegawai_jadwal'].toString(),
-        'status_absen': kegiatan['status_absen'].toString(),
       },
     );
 
@@ -59,14 +57,12 @@ class _PageKegiatanScanState extends State<PageKegiatanScan> {
 
     if (response != null) {
       if (response['success']) {
-        simpanAbsen();
+        return response['data'];
       } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialogOkWidget(message: response['message'].toString()),
-        );
+        return null;
       }
     }
+    return null;
   }
 
   Future<void> simpanAbsen() async {
@@ -106,15 +102,14 @@ class _PageKegiatanScanState extends State<PageKegiatanScan> {
     DateTime dateTime = DateTime.now();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.simpanAbsenKegiatan,
+      url: EndPoint.simpanAbsenTryoutJasmani,
       params: {
         'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
         'hash_user': await getPrefrence(HASH_USER) ?? "",
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
-        'kd_pegawai_jadwal': _kegiatan['kd_pegawai_jadwal'].toString(),
-        'status_absen': _kegiatan['status_absen'].toString(),
-        'kd_tanda': _kegiatan['kd_tanda'].toString(),
+        'jenis_kegiatan': _tryout['jenis_kegiatan'].toString(),
+        'kd_tryout': _tryout['kd_tryout'].toString(),
         'lat': latitude.toString(),
         'long': longitude.toString(),
       },
@@ -167,6 +162,8 @@ class _PageKegiatanScanState extends State<PageKegiatanScan> {
           controller: scanC,
           allowDuplicates: true,
           onDetect: (barcode, args) async {
+            scanC.stop();
+            log(barcode.rawValue.toString());
             if (barcode.rawValue == null) {
               final result = await showDialog<bool>(
                 context: context,
@@ -179,18 +176,15 @@ class _PageKegiatanScanState extends State<PageKegiatanScan> {
                 AppNavigator.instance.pop();
               }
             } else {
-              log("kd_kegiatan:   " + _kegiatan['kd_pegawai_jadwal'].toString());
-              log("barcode:  " + barcode.rawValue.toString());
-              if (barcode.rawValue == _kegiatan['kd_pegawai_jadwal'].toString()) {
-                scanC.stop();
-                scanC.dispose();
-                cekKegiatan(_kegiatan);
+              log(_tryout['kd_tryout'].toString());
+              if (barcode.rawValue == _tryout['kd_tryout'].toString()) {
+                simpanAbsen();
               } else {
                 final result = await showDialog<bool>(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) => const AlertDialogOkWidget(
-                    message: "Barcode absen tidak sesuai dengan jadwal kegiatan anda",
+                    message: "Barcode tryout tidak sesuai dengan jadwal tryout anda",
                   ),
                 );
                 if (result ?? false) {

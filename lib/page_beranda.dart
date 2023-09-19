@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
@@ -7,9 +9,11 @@ import 'package:absentip/modules/absen/page_data_absensi.dart';
 import 'package:absentip/modules/aktivitas/page_aktivitas.dart';
 import 'package:absentip/modules/gaji/page_gaji.dart';
 import 'package:absentip/modules/kalender/page_kalender.dart';
-import 'package:absentip/modules/kegiatan/page_kegiatan.dart';
-import 'package:absentip/modules/kegiatan/page_kegiatan_detail.dart';
+import 'package:absentip/modules/tryout_akademik/page_tryout_akademik.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_detail.dart';
 import 'package:absentip/modules/lembur/page_rekap_lembur.dart';
+import 'package:absentip/modules/tryout_psikologi/page_tryout_psikologi.dart';
 import 'package:absentip/page_profil_detail.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
@@ -24,6 +28,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'modules/tryout_akademik/page_tryout_akademik_detail.dart';
+import 'modules/tryout_psikologi/page_tryout_psikologi_detail.dart';
 
 class PageBeranda extends StatefulWidget {
   const PageBeranda({Key? key}) : super(key: key);
@@ -173,7 +180,14 @@ class _PageBerandaState extends State<PageBeranda> {
                                 return Center(child: loadingWidget());
                               },
                               errorWidget: (context, url, error) {
-                                return const CircleAvatar(backgroundImage: AssetImage("assets/images/ic_launcher.jpg"), radius: 50);
+                                return CircleAvatar(
+                                  backgroundImage: Image.asset(
+                                    AppImages.logoGold,
+                                    width: 30,
+                                    height: 30,
+                                  ).image,
+                                  radius: 10,
+                                );
                               },
                             ),
                     ),
@@ -290,10 +304,10 @@ class _PageBerandaState extends State<PageBeranda> {
                                 if (_apiResponse.getApiStatus == ApiStatus.success) {
                                   Map? jadwalMengajar = _apiResponse.getData['mengajar'];
                                   if (jadwalMengajar == null) {
-                                    return const Center(
+                                    return Center(
                                       child: Text(
-                                        'Jadwal mengajar tidak tersedia',
-                                        style: TextStyle(
+                                        _apiResponse.getData['text_mengajar'].toString(),
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 12,
                                           fontWeight: FontWeight.normal,
@@ -382,19 +396,19 @@ class _PageBerandaState extends State<PageBeranda> {
                                 builder: (context) => const PageDataAbsensi(),
                               ));
                             }),
-                            itemMenu("images/ic_jasmani.png", "Kegiatan\nJasmani", () {
+                            itemMenu("images/ic_jasmani.png", "Tryout\nJasmani", () {
                               AppNavigator.instance.push(MaterialPageRoute(
-                                builder: (context) => const PageKegiatan(jenisKegiatan: "jasmani"),
+                                builder: (context) => const PageTryoutJasmani(),
                               ));
                             }),
-                            itemMenu("images/ic_akademik.png", "Kegiatan\nAkademik", () {
+                            itemMenu("images/ic_akademik.png", "Tryout\nAkademik", () {
                               AppNavigator.instance.push(MaterialPageRoute(
-                                builder: (context) => const PageKegiatan(jenisKegiatan: "akademik"),
+                                builder: (context) => const PageTryoutAkademik(),
                               ));
                             }),
-                            itemMenu("images/ic_psikolog.png", "Kegiatan\nPsikologi", () {
+                            itemMenu("images/ic_psikolog.png", "Tryout\nPsikologi", () {
                               AppNavigator.instance.push(MaterialPageRoute(
-                                builder: (context) => const PageKegiatan(jenisKegiatan: "psikologi"),
+                                builder: (context) => const PageTryoutPsikologi(),
                               ));
                             }),
                           ],
@@ -465,14 +479,35 @@ class _PageBerandaState extends State<PageBeranda> {
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                   child: InkWell(
                     onTap: () {
-                      AppNavigator.instance.push(
-                        MaterialPageRoute(
-                          builder: (context) => PageKegiatanDetail(
-                            kdTryout: element['kd_tryout'].toString(),
-                            jenisKegiatan: element['jenis'].toString(),
-                          ),
-                        ),
-                      );
+                      switch (element['jenis'].toString()) {
+                        case "akademik":
+                          AppNavigator.instance.push(
+                            MaterialPageRoute(
+                              builder: (context) => PageTryoutAkademikDetail(
+                                kdTryout: element['kd_tryout'].toString(),
+                              ),
+                            ),
+                          );
+                          break;
+                        case "jasmani":
+                          AppNavigator.instance.push(
+                            MaterialPageRoute(
+                              builder: (context) => PageTryoutJasmaniDetail(
+                                kdTryout: element['kd_tryout'].toString(),
+                              ),
+                            ),
+                          );
+                          break;
+                        case "psikologi":
+                          AppNavigator.instance.push(
+                            MaterialPageRoute(
+                              builder: (context) => PageTryoutPsikologiDetail(
+                                kdTryout: element['kd_tryout'].toString(),
+                              ),
+                            ),
+                          );
+                          break;
+                      }
                     },
                     child: SizedBox(
                       width: double.infinity,
