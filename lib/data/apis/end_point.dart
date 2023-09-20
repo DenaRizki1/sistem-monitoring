@@ -62,4 +62,12 @@ abstract class EndPoint {
   static String simpanAbsenKegiatan = '${getBaseUrl()}/kegiatan/simpanAbsenKegiatan';
 
   static String event = '${getBaseUrl()}/kalender/event';
+
+  static String getProvinsi = '${getBaseUrl()}/pendaftaran/getProvinsi';
+  static String getKota = '${getBaseUrl()}/pendaftaran/getKota';
+  static String getKecamatan = '${getBaseUrl()}/pendaftaran/getKecamatan';
+  static String getKelurahan = '${getBaseUrl()}/pendaftaran/getKelurahan';
+  static String getPendidikan = '${getBaseUrl()}/pendaftaran/getPendidikan';
+  static String simpanPendaftaran = '${getBaseUrl()}/pendaftaran/simpanPendaftaran';
+  static String getBank = '${getBaseUrl()}/pendaftaran/getBank';
 }
