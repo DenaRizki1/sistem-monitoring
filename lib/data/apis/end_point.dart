@@ -33,7 +33,11 @@ abstract class EndPoint {
   static String absenIzin = '${getBaseUrl()}/izin/absenIzin';
 
   static String simpanLembur = '${getBaseUrl()}/lembur/simpanLembur';
+  static String simpanLemburV2 = '${getBaseUrl()}/lembur/simpanLemburV2';
   static String lembur = '${getBaseUrl()}/lembur/lembur';
+  static String cekDurasiLembur = '${getBaseUrl()}/lembur/cekDurasiLembur';
+  static String uploadFileLembur = '${getBaseUrl()}/lembur/uploadFileLembur';
+  static String ajukanUlangLembur = '${getBaseUrl()}/lembur/ajukanUlangLembur';
 
   static String aktivitas = '${getBaseUrl()}/aktivitas/aktivitas';
   static String aktivitasDetail = '${getBaseUrl()}/aktivitas/aktivitasDetail';
