@@ -41,10 +41,10 @@ abstract class EndPoint {
   static String updateAktivitas = '${getBaseUrl()}/aktivitas/updateAktivitas';
   static String uploadAktivitas = '${getBaseUrl()}/aktivitas/uploadAktivitas';
 
-  static String tryoutJasmani = '${getBaseUrl()}/tryout_jasmani/tryoutJasmani';
-  static String tryoutDetailJasmani = '${getBaseUrl()}/tryout_jasmani/tryoutDetailJasmani';
-  static String cekTryoutJasmani = '${getBaseUrl()}/tryout_jasmani/cekTryoutJasmani';
-  static String simpanAbsenTryoutJasmani = '${getBaseUrl()}/tryout_jasmani/simpanAbsenTryoutJasmani';
+  static String tryoutJasmani = '${getBaseUrl()}/tryout_jasmani_v2/tryoutJasmani';
+  static String tryoutDetailJasmani = '${getBaseUrl()}/tryout_jasmani_v2/tryoutDetailJasmani';
+  static String cekTryoutJasmani = '${getBaseUrl()}/tryout_jasmani_v2/cekTryoutJasmani';
+  static String simpanAbsenTryoutJasmani = '${getBaseUrl()}/tryout_jasmani_v2/simpanAbsenTryoutJasmani';
 
   static String tryoutPsikologi = '${getBaseUrl()}/tryout_psikologi/tryoutPsikologi';
   static String tryoutDetailPsikologi = '${getBaseUrl()}/tryout_psikologi/tryoutDetailPsikologi';

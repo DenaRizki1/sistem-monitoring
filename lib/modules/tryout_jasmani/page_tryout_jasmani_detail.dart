@@ -95,7 +95,7 @@ class _PageTryoutJasmaniDetailState extends State<PageTryoutJasmaniDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget("Detail Kegiatan"),
+      appBar: appBarWidget("Detail Tryout"),
       body: Stack(
         children: [
           SizedBox(

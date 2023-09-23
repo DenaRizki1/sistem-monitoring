@@ -533,7 +533,7 @@ class _PageBerandaState extends State<PageBeranda> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                parseDateInd(element['waktu_mulai'].toString(), "HH:mm dd MMM yyyy") + " - " + parseDateInd(element['waktu_mulai'].toString(), "HH:mm dd MMM yyyy"),
+                                parseDateInd(element['waktu_mulai'].toString(), "HH:mm dd MMM yyyy") + " - " + parseDateInd(element['waktu_selesai'].toString(), "HH:mm dd MMM yyyy"),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 12,

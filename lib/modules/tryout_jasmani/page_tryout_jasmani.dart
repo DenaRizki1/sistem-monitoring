@@ -190,14 +190,22 @@ class _PageTryoutJasmaniState extends State<PageTryoutJasmani> {
                                         borderRadius: BorderRadius.circular(8),
                                         color: AppColor.hitam.withAlpha(200),
                                       ),
-                                      child: Text(
-                                        parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy"),
-                                        style: GoogleFonts.montserrat(
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                                      child: Builder(builder: (context) {
+                                        String tglTryout = "";
+                                        if (parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy") == parseDateInd(kegiatan['waktu_selesai'].toString(), "dd MMM yyyy")) {
+                                          tglTryout = parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy");
+                                        } else {
+                                          tglTryout = parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy") + " s/d " + parseDateInd(kegiatan['waktu_selesai'].toString(), "dd MMM yyyy");
+                                        }
+                                        return Text(
+                                          tglTryout,
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        );
+                                      }),
                                     ),
                                     Container(
                                       width: double.infinity,
@@ -217,7 +225,7 @@ class _PageTryoutJasmaniState extends State<PageTryoutJasmani> {
                                           ),
                                           const SizedBox(height: 6),
                                           Text(
-                                            "Pukul " + parseDateInd(kegiatan['waktu_mulai'].toString(), "HH:mm") + " s/d " + parseDateInd(kegiatan['waktu_selesai'].toString(), "HH:mm") + " WIB",
+                                            kegiatan['nama_lokasi'].toString(),
                                             style: GoogleFonts.montserrat(
                                               color: Colors.black,
                                               fontSize: 14,
