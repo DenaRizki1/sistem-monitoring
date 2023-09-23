@@ -33,7 +33,11 @@ abstract class EndPoint {
   static String absenIzin = '${getBaseUrl()}/izin/absenIzin';
 
   static String simpanLembur = '${getBaseUrl()}/lembur/simpanLembur';
+  static String simpanLemburV2 = '${getBaseUrl()}/lembur/simpanLemburV2';
   static String lembur = '${getBaseUrl()}/lembur/lembur';
+  static String cekDurasiLembur = '${getBaseUrl()}/lembur/cekDurasiLembur';
+  static String uploadFileLembur = '${getBaseUrl()}/lembur/uploadFileLembur';
+  static String ajukanUlangLembur = '${getBaseUrl()}/lembur/ajukanUlangLembur';
 
   static String aktivitas = '${getBaseUrl()}/aktivitas/aktivitas';
   static String aktivitasDetail = '${getBaseUrl()}/aktivitas/aktivitasDetail';
@@ -62,4 +66,12 @@ abstract class EndPoint {
   static String simpanAbsenKegiatan = '${getBaseUrl()}/kegiatan/simpanAbsenKegiatan';
 
   static String event = '${getBaseUrl()}/kalender/event';
+
+  static String getProvinsi = '${getBaseUrl()}/pendaftaran/getProvinsi';
+  static String getKota = '${getBaseUrl()}/pendaftaran/getKota';
+  static String getKecamatan = '${getBaseUrl()}/pendaftaran/getKecamatan';
+  static String getKelurahan = '${getBaseUrl()}/pendaftaran/getKelurahan';
+  static String getPendidikan = '${getBaseUrl()}/pendaftaran/getPendidikan';
+  static String simpanPendaftaran = '${getBaseUrl()}/pendaftaran/simpanPendaftaran';
+  static String getBank = '${getBaseUrl()}/pendaftaran/getBank';
 }

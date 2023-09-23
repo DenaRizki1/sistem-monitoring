@@ -274,13 +274,21 @@ class _PageRekapLemburState extends State<PageRekapLembur> {
                     ),
                     child: Row(
                       children: [
-                        Text(
-                          parseDateInd(detail['jam_awal'].toString(), "HH:mm") + " - " + parseDateInd(detail['jam_akhir'].toString(), "HH:mm"),
-                          style: TextStyle(
-                            fontFamily: GoogleFonts.zcoolQingKeHuangYou().fontFamily,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                        detail['jam_awal'] != null
+                            ? Text(
+                                parseDateInd(detail['jam_awal'].toString(), "HH:mm") + " - " + parseDateInd(detail['jam_akhir'].toString(), "HH:mm"),
+                                style: TextStyle(
+                                  fontFamily: GoogleFonts.zcoolQingKeHuangYou().fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            : Text(
+                                detail['lama_lembur'].toString() + " Sesi - " + detail['lama_sesi'].toString() + " Menit ",
+                                style: TextStyle(
+                                  fontFamily: GoogleFonts.zcoolQingKeHuangYou().fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                       ],
                     ),
                   ),

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/end_point.dart';
+import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
@@ -22,14 +23,15 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PagePengajuanLembur extends StatefulWidget {
-  const PagePengajuanLembur({Key? key}) : super(key: key);
+class PageAjukanUlangLembur extends StatefulWidget {
+  Map? data;
+  PageAjukanUlangLembur({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<PagePengajuanLembur> createState() => _PagePengajuanLemburState();
+  State<PageAjukanUlangLembur> createState() => _PageAjukanUlangLemburState();
 }
 
-class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
+class _PageAjukanUlangLemburState extends State<PageAjukanUlangLembur> {
   final _tglLemburC = TextEditingController();
   final _jamMulaiLemburC = TextEditingController();
   final _jamSelesaiLemburC = TextEditingController();
@@ -40,6 +42,8 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
   String _filePath = "";
   String _fileName = "";
   Map? selectedJenisLembur;
+  Map? dataLembur;
+  ApiStatus _apistatus = ApiStatus.success;
 
   List items = [
     {'jenis': "Lembur Jam", 'index': 1},
@@ -49,8 +53,58 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {});
-
+    dataLembur = widget.data;
+    log(widget.data.toString());
+    setTextField();
     super.initState();
+  }
+
+  void setTextField() {
+    _tglLemburDate = DateTime.parse(dataLembur?['tgl_lembur']);
+    _tglLemburC.text = parseDateInd(_tglLemburDate.toString(), "dd MMMM yyyy");
+    selectedJenisLembur = items[safetyParseInt(dataLembur?['jenis_lembur']) - 1];
+    _sesiLemburC.text = dataLembur?['lama_lembur'];
+    _durasiLemburC.text = dataLembur?['lama_sesi'];
+    _filePath = dataLembur?['foto_lembur'];
+    _keteranganC.text = dataLembur?['keterangan'];
+  }
+
+  Future uploadFileLembur() async {
+    setState(() {
+      _apistatus = ApiStatus.loading;
+    });
+    final pref = await SharedPreferences.getInstance();
+
+    final response = await ApiConnect.instance.uploadFile(
+      EndPoint.uploadFileLembur,
+      "file_lembur",
+      _filePath,
+      {
+        'hash_user': pref.getString(HASH_USER)!,
+        'token_auth': pref.getString(TOKEN_AUTH)!,
+      },
+    );
+
+    if (response != null) {
+      if (response['success']) {
+        setState(() {
+          _apistatus = ApiStatus.success;
+          _filePath = response['data']['file_url'].toString();
+        });
+      } else {
+        setState(() {
+          _apistatus = ApiStatus.failed;
+          showToast(response['message']);
+        });
+      }
+    } else {
+      setState(() {
+        _apistatus = ApiStatus.empty;
+        showToast(response?['message']);
+      });
+    }
+
+    log(response.toString());
   }
 
   Future<Map<String, dynamic>?> simpanLembur() async {
@@ -64,6 +118,7 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
       'time_zone_name': dateTime.timeZoneName,
       'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
       'jenis_lembur': selectedJenisLembur?['index'].toString() ?? "",
+      'file_lembur': _filePath,
       'sesi': _sesiLemburC.text,
       'tgl_lembur': parseDateInd(_tglLemburDate.toString(), "yyyy-MM-dd"),
       'jam_mulai': parseDateInd(_jamMulaiLemburC.text.toString(), "HH:mm:ss"),
@@ -74,20 +129,11 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
 
     Map<String, dynamic>? response;
 
-    if (_filePath.isNotEmpty) {
-      response = await ApiConnect.instance.uploadFile(
-        EndPoint.simpanLemburV2,
-        "foto",
-        _filePath,
-        params,
-      );
-    } else {
-      response = await ApiConnect.instance.request(
-        requestMethod: RequestMethod.post,
-        url: EndPoint.simpanLemburV2,
-        params: params,
-      );
-    }
+    response = await ApiConnect.instance.request(
+      requestMethod: RequestMethod.post,
+      url: EndPoint.ajukanUlangLembur,
+      params: params,
+    );
 
     dismissLoading();
 
@@ -168,6 +214,8 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
           _fileName = imageFile?.name ?? "foto_absen";
         });
       }
+
+      uploadFileLembur();
     } else {
       log("You have not taken image");
     }
@@ -247,25 +295,12 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
                 textCapitalization: TextCapitalization.none,
                 controller: _tglLemburC,
                 readOnly: true,
-                onTap: () {
-                  showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
-                    lastDate: DateTime(DateTime.now().year, DateTime.now().month, 25),
-                  ).then((value) {
-                    _tglLemburDate = value;
-                    if (value != null) {
-                      _tglLemburC.text = parseDateInd(_tglLemburDate.toString(), "dd MMMM yyyy");
-                    }
-                  });
-                },
               ),
               const SizedBox(height: 12),
               const LabelForm(label: "Jenis Lembur", isRequired: true),
               const SizedBox(height: 4),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(12),
@@ -274,7 +309,7 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton(
                     borderRadius: BorderRadius.circular(12),
-                    hint: selectedJenisLembur == null ? Text("Pilih Jenis Cuti") : Text(selectedJenisLembur?['jenis'].toString() ?? ""),
+                    hint: selectedJenisLembur == null ? const Text("Pilih Jenis Cuti") : Text(selectedJenisLembur?['jenis'].toString() ?? ""),
                     items: items.map(
                       (val) {
                         return DropdownMenuItem(
@@ -503,62 +538,75 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
                     Visibility(
                       visible: _filePath.isNotEmpty,
                       child: Builder(builder: (context) {
-                        if (_filePath.contains("pdf")) {
-                          //? PDF FILE
-                          return InkWell(
-                            onTap: () async {
-                              // await OpenFile.open(_filePath);
-                            },
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Icon(
-                                      MdiIcons.filePdfBox,
-                                      color: Colors.red.shade200,
-                                      size: 70,
+                        if (_apistatus == ApiStatus.success) {
+                          if (_filePath.contains("pdf")) {
+                            //? PDF FILE
+                            return InkWell(
+                              onTap: () async {
+                                // await OpenFile.open(_filePath);
+                              },
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Icon(
+                                        MdiIcons.filePdfBox,
+                                        color: Colors.red.shade200,
+                                        size: 70,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    _fileName,
-                                    style: TextStyle(color: Colors.red.shade400),
-                                  ),
-                                ],
+                                    Text(
+                                      _fileName,
+                                      style: TextStyle(color: Colors.red.shade400),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            );
+                          } else {
+                            //? IMAGE FILE
+                            return InkWell(
+                              onTap: () => AppNavigator.instance.push(
+                                MaterialPageRoute(
+                                  builder: (context) => ShowImagePage(
+                                    judul: "Foto Lembur",
+                                    url: _filePath,
+                                  ),
+                                ),
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    _filePath,
+                                    fit: BoxFit.fill,
+                                    errorBuilder: (context, urlImage, error) {
+                                      return Image.asset(
+                                        AppImages.noImage,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        } else if (_apistatus == ApiStatus.loading) {
+                          return Center(
+                            child: loadingWidget(),
+                          );
+                        } else if (_apistatus == ApiStatus.empty) {
+                          return const Center(
+                            child: Text("Foto tidak di temukan"),
                           );
                         } else {
-                          //? IMAGE FILE
-                          return InkWell(
-                            onTap: () => AppNavigator.instance.push(
-                              MaterialPageRoute(
-                                builder: (context) => ShowImagePage(
-                                  judul: "Foto Lembur",
-                                  url: _filePath,
-                                  isFile: true,
-                                ),
-                              ),
-                            ),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  File(_filePath),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, urlImage, error) {
-                                    return Image.asset(
-                                      AppImages.noImage,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
+                          return const Center(
+                            child: Text("Terjasi kesalahan"),
                           );
                         }
                       }),
@@ -604,6 +652,7 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
+                  log(_tglLemburDate.toString());
                   if (_tglLemburDate == null) {
                     showToast("Tanggal lembur tidak boleh kosong");
                   } else if (selectedJenisLembur?['index'] == 1 && _jamMulaiLemburC.text.toString().isEmpty) {

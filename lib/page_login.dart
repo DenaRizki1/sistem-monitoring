@@ -2,11 +2,13 @@ import 'dart:io';
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/end_point.dart';
 import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/page_form_pendaftaran.dart';
 import 'package:absentip/page_home.dart';
 import 'package:absentip/services/location_service.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:absentip/utils/text_montserrat.dart';
 import 'package:absentip/wigets/alert_dialog_confirm_widget.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -146,7 +148,34 @@ class _PageLoginState extends State<PageLogin> {
                         },
                         child: const Text('Masuk'),
                       ),
-                    )
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const TextMontserrat(
+                            text: "Belum Punya Akun? ",
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(width: 5),
+                          InkWell(
+                            onTap: () {
+                              AppNavigator.instance.push(MaterialPageRoute(
+                                builder: (context) => const PageFormPendaftaran(),
+                              ));
+                            },
+                            child: const TextMontserrat(
+                              text: "Buat Akun",
+                              fontSize: 12,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

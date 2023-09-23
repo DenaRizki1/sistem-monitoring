@@ -1,3 +1,4 @@
+import 'package:absentip/modules/lembur/page_ajukan_ulang_lembur.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
@@ -104,29 +105,51 @@ class _PageDetailLemburState extends State<PageDetailLembur> {
                                             textAlign: TextAlign.left,
                                           ),
                                           FxSpacing.height(4),
-                                          Text(
-                                            parseDateInd(_dataLembur['jam_awal'].toString(), "HH:mm") + " - " + parseDateInd(_dataLembur['jam_akhir'].toString(), "HH:mm"),
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.black,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                            textAlign: TextAlign.left,
-                                          ),
+                                          _dataLembur['jam_awal'] != null
+                                              ? Text(
+                                                  parseDateInd(_dataLembur['jam_awal'].toString(), "HH:mm") + " - " + parseDateInd(_dataLembur['jam_akhir'].toString(), "HH:mm"),
+                                                  style: GoogleFonts.montserrat(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.normal,
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                )
+                                              : Text(
+                                                  _dataLembur['lama_lembur'].toString() + " Sesi - " + _dataLembur['lama_sesi'].toString() + " Menit ",
+                                                  style: GoogleFonts.montserrat(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.normal,
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
                                         ],
                                       ),
                                     ),
-                                    FxContainer.bordered(
-                                      borderRadiusAll: 12,
-                                      height: 20,
-                                      padding: FxSpacing.xy(8, 2),
-                                      border: Border.all(color: AppColor.hitam),
-                                      color: AppColor.biru2,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [FxText.bodySmall(_dataLembur['lama_lembur'].toString() + " Jam", color: Colors.white)],
-                                      ),
-                                    )
+                                    _dataLembur['jam_awal'] != null
+                                        ? FxContainer.bordered(
+                                            borderRadiusAll: 12,
+                                            height: 20,
+                                            padding: FxSpacing.xy(8, 2),
+                                            border: Border.all(color: AppColor.hitam),
+                                            color: AppColor.biru2,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [FxText.bodySmall(_dataLembur['lama_lembur'].toString() + " Jam", color: Colors.white)],
+                                            ),
+                                          )
+                                        : FxContainer.bordered(
+                                            borderRadiusAll: 12,
+                                            height: 20,
+                                            padding: FxSpacing.xy(8, 2),
+                                            border: Border.all(color: AppColor.hitam),
+                                            color: AppColor.biru2,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [FxText.bodySmall((safetyParseInt(_dataLembur['lama_sesi']) / 60).toString().replaceAll(".0", "") + " Jam", color: Colors.white)],
+                                            ),
+                                          )
                                   ],
                                 ),
                               ),
@@ -277,6 +300,48 @@ class _PageDetailLemburState extends State<PageDetailLembur> {
                       );
                     }
                   }),
+                  Visibility(
+                    visible: _dataLembur['keterangan_admin'] != null,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        const LabelForm(label: "Keterangan Verifikasi", fontSize: 14),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Card(
+                            margin: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(color: Colors.green),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Text(_dataLembur['keterangan_admin'].toString()),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Visibility(
+                    visible: _dataLembur['status_lembur'].toString() == '3',
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        onPressed: () {
+                          AppNavigator.instance.push(
+                            MaterialPageRoute(
+                              builder: (context) => PageAjukanUlangLembur(data: _dataLembur),
+                            ),
+                          );
+                        },
+                        child: Text("Ajukan Ulang"),
+                      ),
+                    ),
+                  )
                 ],
               ),
               FxSpacing.height(20),
