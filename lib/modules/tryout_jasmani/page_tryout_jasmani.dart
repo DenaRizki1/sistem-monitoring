@@ -278,4 +278,17 @@ class _PageTryoutJasmaniState extends State<PageTryoutJasmani> {
       ),
     );
   }
+
+  Color colorStatusAbsen(String statusAbsen) {
+    switch (statusAbsen) {
+      case "1":
+        return Colors.blue;
+      case "2":
+        return Colors.green;
+      case "3":
+        return Colors.red;
+      default:
+        return Colors.black;
+    }
+  }
 }

@@ -51,6 +51,7 @@ class _PageTryoutJasmaniScanState extends State<PageTryoutJasmaniScan> {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
         'kd_tryout': tryout['kd_tryout'].toString(),
+        'kd_lokasi_absen': _tryout['kd_lokasi_absen'].toString(),
         'status_absen': tryout['status_absen'].toString(),
       },
     );
@@ -113,6 +114,7 @@ class _PageTryoutJasmaniScanState extends State<PageTryoutJasmaniScan> {
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
         'kd_tryout': _tryout['kd_tryout'].toString(),
+        'kd_lokasi_absen': _tryout['kd_lokasi_absen'].toString(),
         'status_absen': _tryout['status_absen'].toString(),
         'kd_tanda': _tryout['kd_tanda'].toString(),
         'lat': latitude.toString(),

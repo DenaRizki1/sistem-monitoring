@@ -45,7 +45,7 @@ class _PageTryoutJasmaniFotoState extends State<PageTryoutJasmaniFoto> {
     log(_tryout.toString());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        _title = _tryout['nama_tryout']?.toString() ?? "";
+        _title = _tryout['kegiatan_jasmani']?.toString() ?? "";
       });
     });
 
@@ -210,6 +210,7 @@ class _PageTryoutJasmaniFotoState extends State<PageTryoutJasmaniFoto> {
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
         'kd_tryout': _tryout['kd_tryout'].toString(),
+        'kd_lokasi_absen': _tryout['kd_lokasi_absen'].toString(),
         'status_absen': _tryout['status_absen'].toString(),
         'kd_tanda': _tryout['kd_tanda'].toString(),
         'lat': latitude.toString(),

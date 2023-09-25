@@ -265,7 +265,7 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
               const LabelForm(label: "Jenis Lembur", isRequired: true),
               const SizedBox(height: 4),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(12),
@@ -274,7 +274,7 @@ class _PagePengajuanLemburState extends State<PagePengajuanLembur> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton(
                     borderRadius: BorderRadius.circular(12),
-                    hint: selectedJenisLembur == null ? Text("Pilih Jenis Cuti") : Text(selectedJenisLembur?['jenis'].toString() ?? ""),
+                    hint: selectedJenisLembur == null ? const Text("Pilih Jenis Lembur") : Text(selectedJenisLembur?['jenis'].toString() ?? ""),
                     items: items.map(
                       (val) {
                         return DropdownMenuItem(

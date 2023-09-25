@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
@@ -95,7 +97,7 @@ class _PageTryoutJasmaniDetailState extends State<PageTryoutJasmaniDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget("Detail Tryout"),
+      appBar: appBarWidget("Tryout Jasmani"),
       body: Stack(
         children: [
           SizedBox(
@@ -168,73 +170,175 @@ class _PageTryoutJasmaniDetailState extends State<PageTryoutJasmaniDetail> {
                                   const Divider(height: 1),
                                   const SizedBox(height: 8),
                                   itemDetail(true, "Jadwal", kegiatan['nama_tryout'].toString()),
-                                  itemDetail(false, "Tanggal", parseDateInd(kegiatan['tgl_pegawai_jadwal'].toString(), "dd MMMM yyyy")),
-                                  itemDetail(true, "Jam Masuk", parseDateInd(kegiatan['jam_masuk'].toString(), "HH:mm") + " WIB"),
-                                  itemDetail(false, "Jam Pulang", parseDateInd(kegiatan['jam_pulang'].toString(), "HH:mm") + " WIB"),
-                                  itemDetail(true, "Lokasi", kegiatan['nama_lokasi'].toString()),
-                                  itemDetail(false, "Deskripsi Lokasi", kegiatan['deskripsi_lokasi'].toString()),
+                                  itemDetail(false, "Mulai", parseDateInd(kegiatan['waktu_mulai'].toString(), "dd MMM yyyy | HH:mm") + " WIB"),
+                                  itemDetail(true, "Selesai", parseDateInd(kegiatan['waktu_selesai'].toString(), "dd MMM yyyy | HH:mm") + " WIB"),
+                                  itemDetail(false, "Nama Pendidikan", kegiatan['nama_pendidikan'].toString()),
+                                  itemDetail(true, "Jumlah kegiatan", kegiatan['list_lokasi'].length.toString() + " Kegiatan"),
+                                  const SizedBox(height: 8),
                                   SizedBox(
                                     width: double.infinity,
                                     child: ElevatedButton(
                                       onPressed: () async {
-                                        String lat = kegiatan['latitude'].toString();
-                                        String lng = kegiatan['longitude'].toString();
-                                        final availableMaps = await MapLauncher.installedMaps;
-                                        if (availableMaps.isEmpty) {
-                                          openUrl("'https://www.google.com/maps/search/?api=1&query=$lat,$lng'");
-                                        } else {
-                                          await availableMaps.first.showMarker(
-                                            coords: Coords(safetyParseDouble(lat), safetyParseDouble(lng)),
-                                            title: kegiatan['nama_lokasi'].toString(),
-                                          );
-                                        }
+                                        log(kegiatan['qr_absen'].toString());
+                                        AppNavigator.instance.push(
+                                          MaterialPageRoute(
+                                            builder: (context) => ShowImagePage(
+                                              judul: "QR Absen",
+                                              url: kegiatan['qr_absen'].toString(),
+                                            ),
+                                          ),
+                                        );
                                       },
-                                      child: const Text('Lihat Lokasi Map'),
+                                      child: const Text('Lihat QR Absen'),
                                     ),
                                   ),
-                                  Visibility(
-                                    visible: kegiatan['visible_absen'] ?? false,
-                                    child: SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom().copyWith(
-                                          backgroundColor: const MaterialStatePropertyAll(Colors.green),
-                                        ),
-                                        onPressed: () async {
-                                          if (kegiatan['enable_absen'] ?? false) {
-                                            pilihMetodeAbsen(kegiatan);
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialogOkWidget(message: kegiatan['text_status_absen'].toString()),
-                                            );
-                                          }
-                                        },
-                                        child: Text(kegiatan['text_absen'].toString()),
-                                      ),
-                                    ),
-                                  )
                                 ],
                               ),
                             ),
                           ),
-                          Builder(builder: (context) {
-                            Map? absenMasuk = kegiatan['absen_masuk'];
-                            Map? absenPulang = kegiatan['absen_pulang'];
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: kegiatan['list_lokasi'].length,
+                            itemBuilder: (context, index) {
+                              Map itemKegiatan = kegiatan['list_lokasi'][index];
+                              return Card(
+                                margin: const EdgeInsets.only(top: 12, left: 16, right: 16),
+                                color: Colors.white,
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Image.asset(
+                                            AppImages.logoGold,
+                                            width: 40,
+                                            color: AppColor.biru2,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            itemKegiatan['kegiatan_jasmani'].toString().toUpperCase(),
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Divider(height: 1),
+                                      const SizedBox(height: 8),
+                                      itemDetail(false, "Mulai", parseDateInd(itemKegiatan['waktu_mulai'].toString(), "dd MMM yyyy | HH:mm") + " WIB"),
+                                      itemDetail(true, "Selesai", parseDateInd(itemKegiatan['waktu_selesai'].toString(), "dd MMM yyyy | HH:mm") + " WIB"),
+                                      itemDetail(false, "Lokasi", itemKegiatan['nama_lokasi'].toString()),
+                                      const SizedBox(height: 8),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            String lat = itemKegiatan['latitude'].toString();
+                                            String lng = itemKegiatan['longitude'].toString();
+                                            final availableMaps = await MapLauncher.installedMaps;
+                                            if (availableMaps.isEmpty) {
+                                              openUrl("'https://www.google.com/maps/search/?api=1&query=$lat,$lng'");
+                                            } else {
+                                              await availableMaps.first.showMarker(
+                                                coords: Coords(safetyParseDouble(lat), safetyParseDouble(lng)),
+                                                title: itemKegiatan['nama_lokasi'].toString(),
+                                              );
+                                            }
+                                          },
+                                          child: const Text('Lihat Lokasi Map'),
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: itemKegiatan['visible_absen'] ?? false,
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom().copyWith(
+                                              backgroundColor: const MaterialStatePropertyAll(Colors.green),
+                                            ),
+                                            onPressed: () async {
+                                              if (itemKegiatan['enable_absen'] ?? false) {
+                                                pilihMetodeAbsen(itemKegiatan);
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => AlertDialogOkWidget(message: itemKegiatan['text_status_absen'].toString()),
+                                                );
+                                              }
+                                            },
+                                            child: Text(itemKegiatan['text_absen'].toString()),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Builder(builder: (context) {
+                                        Map? absenMasuk = itemKegiatan['absen_masuk'];
+                                        Map? absenPulang = itemKegiatan['absen_pulang'];
 
-                            if (absenMasuk != null && absenPulang != null) {
-                              return Column(
-                                children: [
-                                  detailAbsen(absenMasuk),
-                                  detailAbsen(absenPulang),
-                                ],
+                                        if (absenMasuk != null && absenPulang != null) {
+                                          return ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: ExpansionTile(
+                                              collapsedBackgroundColor: Colors.grey.shade300,
+                                              backgroundColor: Colors.grey.shade300,
+                                              collapsedIconColor: Colors.blue,
+                                              iconColor: Colors.blue,
+                                              title: const Text(
+                                                'Detail Absen',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              children: [
+                                                detailAbsen(absenMasuk),
+                                                detailAbsen(absenPulang),
+                                              ],
+                                            ),
+                                          );
+                                        } else if (absenMasuk != null) {
+                                          return ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: ExpansionTile(
+                                              collapsedBackgroundColor: Colors.grey.shade300,
+                                              backgroundColor: Colors.grey.shade300,
+                                              collapsedIconColor: Colors.blue,
+                                              iconColor: Colors.blue,
+                                              title: const Text(
+                                                'Detail Absen',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              children: [
+                                                detailAbsen(absenMasuk),
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          return const SizedBox.shrink();
+                                        }
+                                      })
+                                    ],
+                                  ),
+                                ),
                               );
-                            } else if (absenMasuk != null) {
-                              return detailAbsen(absenMasuk);
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          })
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -307,8 +411,8 @@ class _PageTryoutJasmaniDetailState extends State<PageTryoutJasmaniDetail> {
 
   Widget detailAbsen(Map absen) {
     return Card(
-      margin: const EdgeInsets.only(top: 12, left: 16, right: 16),
-      color: Colors.white,
+      margin: const EdgeInsets.only(top: 12, left: 0, right: 0),
+      color: Colors.grey.shade300,
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
