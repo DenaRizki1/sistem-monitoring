@@ -45,7 +45,6 @@ dependencies:
   firebase_messaging: ^14.6.5
   flutter:
     sdk: flutter
-  flutter_background_service: ^4.0.0
   flutter_downloader: 1.10.1+2
   flutter_easyloading: ^3.0.3
   flutter_html: ^2.1.2
