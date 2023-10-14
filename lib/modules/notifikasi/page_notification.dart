@@ -1,11 +1,18 @@
+import 'dart:developer';
+
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/end_point.dart';
+import 'package:absentip/data/contants/module_notif.dart';
 import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/modules/kegiatan/page_kegiatan_detail.dart';
 import 'package:absentip/modules/notifikasi/page_notification_detail.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_detail.dart';
 import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/utils/constants.dart';
 import 'package:absentip/utils/helpers.dart';
+import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:absentip/utils/sessions.dart';
 import 'package:absentip/utils/text_montserrat.dart';
 import 'package:absentip/wigets/alert_dialog_confirm_widget.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
@@ -181,10 +188,44 @@ class _PageNotificationState extends State<PageNotification> {
                                 }
                               },
                               onTap: () async {
-                                await readNotifikasi(_listNotif[index]['id_notif'].toString());
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PageNotificationDetail(data: _listNotif[index]),
-                                ));
+                                final notif = _listNotif[index];
+                                await readNotifikasi(notif['id_notif'].toString());
+                                switch (notif['module'].toString()) {
+                                  case ModuleNotif.KEGIATAN:
+                                    AppNavigator.instance
+                                        .push(
+                                          MaterialPageRoute(
+                                            builder: (context) => PageKegiatanDetail(
+                                              kdPegawaiJadwal: notif['id'].toString(),
+                                            ),
+                                          ),
+                                        )
+                                        .then(
+                                          (value) => getNotifikasi(),
+                                        );
+                                    break;
+
+                                  case ModuleNotif.TRYOUT_JASMANI:
+                                    AppNavigator.instance
+                                        .push(
+                                          MaterialPageRoute(
+                                            builder: (context) => PageTryoutJasmaniDetail(
+                                              kdTryout: notif['id'].toString(),
+                                            ),
+                                          ),
+                                        )
+                                        .then(
+                                          (value) => getNotifikasi(),
+                                        );
+
+                                    break;
+
+                                  default:
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => PageNotificationDetail(data: _listNotif[index]),
+                                    ));
+                                    break;
+                                }
                               },
                               child: Card(
                                 color: Colors.white,

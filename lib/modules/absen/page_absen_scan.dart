@@ -11,7 +11,8 @@ import 'package:absentip/wigets/alert_dialog_confirm_widget.dart';
 import 'package:absentip/wigets/alert_dialog_ok_widget.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class PageAbsenScan extends StatefulWidget {
   final Map cekAbsen;
@@ -22,18 +23,18 @@ class PageAbsenScan extends StatefulWidget {
 }
 
 class _PageAbsenScanState extends State<PageAbsenScan> {
-  final scanC = MobileScannerController();
-
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scanQR();
+    });
 
     super.initState();
   }
 
   @override
   void dispose() {
-    scanC.dispose();
+    // scanC.dispose();
     super.dispose();
   }
 
@@ -148,37 +149,26 @@ class _PageAbsenScanState extends State<PageAbsenScan> {
     }
   }
 
+  Future<void> scanQR() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      log("barcodeScanRes=" + barcodeScanRes);
+      if (barcodeScanRes == "-1") {
+        AppNavigator.instance.pop();
+      } else {
+        cekBarcodeAbsen(barcodeScanRes);
+      }
+    } on PlatformException {
+      showToast("Failed to get platform version.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     log("PageAbsenScanTetap");
     return Scaffold(
       appBar: appBarWidget("Scan QR Code"),
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: MobileScanner(
-          controller: scanC,
-          allowDuplicates: true,
-          onDetect: (barcode, args) async {
-            scanC.stop();
-            log(barcode.rawValue.toString());
-            if (barcode.rawValue == null) {
-              final result = await showDialog<bool>(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const AlertDialogOkWidget(
-                  message: "Barcode Jadwal tidak ditemukan",
-                ),
-              );
-              if (result ?? false) {
-                AppNavigator.instance.pop();
-              }
-            } else {
-              cekBarcodeAbsen(barcode.rawValue.toString());
-            }
-          },
-        ),
-      ),
     );
   }
 }

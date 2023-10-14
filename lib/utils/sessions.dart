@@ -1,6 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
@@ -29,12 +26,6 @@ Future<bool> getPrefrenceBool(String key) async {
 }
 
 Future<void> clearUserSession() async {
-  if (!kIsWeb) {
-    await GoogleSignIn().signOut();
-  }
-
-  FirebaseAuth.instance.signOut();
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool(IS_LOGIN, false);
   prefs.setString(HASH_USER, "");

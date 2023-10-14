@@ -295,7 +295,7 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
                         ),
                         onPressed: () {
                           setState(() {
-                            _konfirmasipasswordVisible = !_konfirmasipasswordVisible;
+                            _passwordVisible = !_passwordVisible;
                           });
                         },
                       ),
@@ -309,7 +309,7 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
 
                       return null;
                     },
-                    obscureText: _konfirmasipasswordVisible,
+                    obscureText: _passwordVisible,
                   ),
                   const SizedBox(height: 12),
                   const LabelForm(label: "Konfirmasi Password", isRequired: true),
@@ -320,12 +320,12 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
                       textHint: "Masukkan Konfirmasi Kata Sandi",
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                          _konfirmasipasswordVisible ? Icons.visibility : Icons.visibility_off,
                           color: AppColor.biru,
                         ),
                         onPressed: () {
                           setState(() {
-                            _passwordVisible = !_passwordVisible;
+                            _konfirmasipasswordVisible = !_konfirmasipasswordVisible;
                           });
                         },
                       ),
@@ -339,7 +339,7 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
 
                       return null;
                     },
-                    obscureText: _passwordVisible,
+                    obscureText: _konfirmasipasswordVisible,
                   ),
                   const SizedBox(height: 12),
                   const LabelForm(label: "NO Hp", isRequired: true),

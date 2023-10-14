@@ -116,10 +116,6 @@ class PushNotificationService {
         );
         break;
 
-      case ModuleNotif.KEGIATAN:
-        // Get.toNamed(Routes.DETAIL_CM_V2, arguments: message.data['id'].toString());
-        break;
-
       default:
         log("default");
         break;
@@ -182,20 +178,6 @@ class PushNotificationService {
     switch (message.data['module'].toString()) {
       case ModuleNotif.FORCE_LOGOUT:
         await clearUserSession();
-        // AppNavigator.instance.pushAndRemoveUntil(
-        //   MaterialPageRoute(
-        //     builder: (context) => const LoginPage(),
-        //   ),
-        //   (p0) => false,
-        // );
-        break;
-
-      case ModuleNotif.KEGIATAN:
-        // AppNavigator.instance.push(
-        //   MaterialPageRoute(
-        //     builder: (context) => KlaimKomisiDetailPage(kdClaim: message.data['id'].toString()),
-        //   ),
-        // );
         break;
 
       default:
@@ -244,6 +226,14 @@ class PushNotificationService {
         break;
 
       case ModuleNotif.KEGIATAN:
+        // AppNavigator.instance.push(
+        //   MaterialPageRoute(
+        //     builder: (context) => KlaimKomisiDetailPage(kdClaim: data['id'].toString()),
+        //   ),
+        // );
+        break;
+
+      case ModuleNotif.TRYOUT_JASMANI:
         // AppNavigator.instance.push(
         //   MaterialPageRoute(
         //     builder: (context) => KlaimKomisiDetailPage(kdClaim: data['id'].toString()),

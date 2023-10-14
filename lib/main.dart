@@ -15,25 +15,25 @@ void main() async {
   await DependecyInjection.init();
 
   runApp(
-    //   MultiProvider(
-    //   providers: [
-    //     ChangeNotifierProvider(
-    //       create: (context) => MainProvider(),
-    //     ),
-    //   ],
-    //   child: const MyApp(),
-    // )
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => MainProvider(),
-          ),
-        ],
-        child: const MyApp(), // Wrap your app
-      ),
-    ),
+      MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MainProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    )
+    // DevicePreview(
+    //   enabled: !kReleaseMode,
+    //   builder: (context) => MultiProvider(
+    //     providers: [
+    //       ChangeNotifierProvider(
+    //         create: (context) => MainProvider(),
+    //       ),
+    //     ],
+    //     child: const MyApp(), // Wrap your app
+    //   ),
+    // ),
   );
 }
 

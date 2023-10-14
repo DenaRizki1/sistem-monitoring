@@ -59,11 +59,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyA3HQDOE293Aq3WOInYhThOmDpSQBd4aeo',
-    appId: '1:481668129824:ios:c3cb4f05a5a3ba0cb6c845',
+    appId: '1:481668129824:ios:d136da3dc5c85dedb6c845',
     messagingSenderId: '481668129824',
     projectId: 'absen-pengajar-tip',
     storageBucket: 'absen-pengajar-tip.appspot.com',
-    iosClientId: '481668129824-dc292uj34gn39cvfprv2fcs4hdrhdkbf.apps.googleusercontent.com',
-    iosBundleId: 'com.appdev.absentip',
+    iosBundleId: 'com.appdev.pegawaitip',
   );
 }

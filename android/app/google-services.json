@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "481668129824-jtl7muhaa895i3etmodu88fb2n8qitom.apps.googleusercontent.com",
+              "client_id": "481668129824-dc292uj34gn39cvfprv2fcs4hdrhdkbf.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.mitraTip"
+                "bundle_id": "com.appdev.absentip"
               }
             }
           ]
@@ -67,10 +67,10 @@
               "client_type": 3
             },
             {
-              "client_id": "481668129824-jtl7muhaa895i3etmodu88fb2n8qitom.apps.googleusercontent.com",
+              "client_id": "481668129824-dc292uj34gn39cvfprv2fcs4hdrhdkbf.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.mitraTip"
+                "bundle_id": "com.appdev.absentip"
               }
             }
           ]

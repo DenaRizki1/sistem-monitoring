@@ -12,7 +12,6 @@ import 'package:absentip/utils/text_montserrat.dart';
 import 'package:absentip/wigets/alert_dialog_confirm_widget.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -150,7 +149,7 @@ class _PageLoginState extends State<PageLogin> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,

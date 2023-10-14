@@ -11,8 +11,9 @@ import 'package:absentip/utils/sessions.dart';
 import 'package:absentip/wigets/alert_dialog_ok_widget.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PageKegiatanScan extends StatefulWidget {
@@ -24,19 +25,20 @@ class PageKegiatanScan extends StatefulWidget {
 }
 
 class _PageKegiatanScanState extends State<PageKegiatanScan> {
-  final scanC = MobileScannerController();
   Map _kegiatan = {};
 
   @override
   void initState() {
     _kegiatan = widget.kegiatan;
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scanQR();
+    });
     super.initState();
   }
 
   @override
   void dispose() {
-    scanC.dispose();
+    // scanC.dispose();
     super.dispose();
   }
 
@@ -156,51 +158,40 @@ class _PageKegiatanScanState extends State<PageKegiatanScan> {
     }
   }
 
+  Future<void> scanQR() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      log("barcodeScanRes=" + barcodeScanRes);
+      if (barcodeScanRes == "-1") {
+        AppNavigator.instance.pop();
+      } else {
+        log("kd_kegiatan:   " + _kegiatan['kd_pegawai_jadwal'].toString());
+        log("barcode:  " + barcodeScanRes);
+        if (barcodeScanRes == _kegiatan['kd_pegawai_jadwal'].toString()) {
+          cekKegiatan(_kegiatan);
+        } else {
+          final result = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const AlertDialogOkWidget(
+              message: "Barcode absen tidak sesuai dengan jadwal kegiatan anda",
+            ),
+          );
+          if (result ?? false) {
+            AppNavigator.instance.pop();
+          }
+        }
+      }
+    } on PlatformException {
+      showToast("Failed to get platform version.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarWidget("Scan QR Code"),
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: MobileScanner(
-          controller: scanC,
-          allowDuplicates: true,
-          onDetect: (barcode, args) async {
-            if (barcode.rawValue == null) {
-              final result = await showDialog<bool>(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const AlertDialogOkWidget(
-                  message: "Barcode tryout tidak ditemukan",
-                ),
-              );
-              if (result ?? false) {
-                AppNavigator.instance.pop();
-              }
-            } else {
-              log("kd_kegiatan:   " + _kegiatan['kd_pegawai_jadwal'].toString());
-              log("barcode:  " + barcode.rawValue.toString());
-              if (barcode.rawValue == _kegiatan['kd_pegawai_jadwal'].toString()) {
-                scanC.stop();
-                scanC.dispose();
-                cekKegiatan(_kegiatan);
-              } else {
-                final result = await showDialog<bool>(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => const AlertDialogOkWidget(
-                    message: "Barcode absen tidak sesuai dengan jadwal kegiatan anda",
-                  ),
-                );
-                if (result ?? false) {
-                  AppNavigator.instance.pop();
-                }
-              }
-            }
-          },
-        ),
-      ),
     );
   }
 }
