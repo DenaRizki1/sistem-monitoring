@@ -14,27 +14,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DependecyInjection.init();
 
-  runApp(
-      MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => MainProvider(),
-        ),
-      ],
-      child: const MyApp(),
-    )
-    // DevicePreview(
-    //   enabled: !kReleaseMode,
-    //   builder: (context) => MultiProvider(
-    //     providers: [
-    //       ChangeNotifierProvider(
-    //         create: (context) => MainProvider(),
-    //       ),
-    //     ],
-    //     child: const MyApp(), // Wrap your app
-    //   ),
-    // ),
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => MainProvider(),
+      ),
+    ],
+    child: const MyApp(),
+  )
+      // DevicePreview(
+      //   enabled: !kReleaseMode,
+      //   builder: (context) => MultiProvider(
+      //     providers: [
+      //       ChangeNotifierProvider(
+      //         create: (context) => MainProvider(),
+      //       ),
+      //     ],
+      //     child: const MyApp(), // Wrap your app
+      //   ),
+      // ),
+      );
 }
 
 class MyApp extends StatelessWidget {
@@ -64,7 +63,7 @@ class MyApp extends StatelessWidget {
     }
 
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       navigatorKey: AppNavigator.instance.navigatorKey,
       title: 'Pengajar TIP',
       theme: ThemeData(

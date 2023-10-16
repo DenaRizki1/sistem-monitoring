@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:developer';
 
 import 'package:absentip/data/apis/api_connect.dart';
@@ -19,17 +21,17 @@ class PageFormPendaftaran extends StatefulWidget {
 }
 
 class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
-  TextEditingController _ECnik = TextEditingController();
-  TextEditingController _ECnamaLengkap = TextEditingController();
-  TextEditingController _ECemail = TextEditingController();
-  TextEditingController _ECpassword = TextEditingController();
-  TextEditingController _ECKonfirmasiPassword = TextEditingController();
-  TextEditingController _ECnoHp = TextEditingController();
-  TextEditingController _ECalamat = TextEditingController();
-  TextEditingController _ECrekening = TextEditingController();
-  TextEditingController _ECtempatLahir = TextEditingController();
-  TextEditingController _ECtanggalLahir = TextEditingController();
-  TextEditingController _ECnamaPemilikR = TextEditingController();
+  final _ECnik = TextEditingController();
+  final _ECnamaLengkap = TextEditingController();
+  final _ECemail = TextEditingController();
+  final _ECpassword = TextEditingController();
+  final _ECKonfirmasiPassword = TextEditingController();
+  final _ECnoHp = TextEditingController();
+  final _ECalamat = TextEditingController();
+  final _ECrekening = TextEditingController();
+  final _ECtempatLahir = TextEditingController();
+  final _ECtanggalLahir = TextEditingController();
+  final _ECnamaPemilikR = TextEditingController();
   String selectedBank = "";
   Map? selectedProvinsi, selectedKota, selectedKecamatan, selectedKelurahan, selectedPendidikan;
   String _selectedJK = "Laki-laki";
@@ -43,9 +45,23 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    // getProvinsi();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _ECnik.dispose();
+    _ECnamaLengkap.dispose();
+    _ECemail.dispose();
+    _ECpassword.dispose();
+    _ECKonfirmasiPassword.dispose();
+    _ECnoHp.dispose();
+    _ECalamat.dispose();
+    _ECrekening.dispose();
+    _ECtempatLahir.dispose();
+    _ECtanggalLahir.dispose();
+    _ECnamaPemilikR.dispose();
+    super.dispose();
   }
 
   Future<List> getProvinsi() async {
@@ -227,26 +243,26 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
               key: _formKey,
               child: Column(
                 children: [
-                  const LabelForm(label: "NIK", isRequired: true),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ECnik,
-                    decoration: textFieldDecoration(
-                      textHint: "Masukkan NIK sesuai KTP",
-                    ),
-                    maxLength: 16,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "NIK tidak boleh kosong";
-                      } else if (value.length != 16) {
-                        return "NIK yang anda masukan kurang dari 16 digit";
-                      }
+                  // const LabelForm(label: "NIK", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // TextFormField(
+                  //   controller: _ECnik,
+                  //   decoration: textFieldDecoration(
+                  //     textHint: "Masukkan NIK sesuai KTP",
+                  //   ),
+                  //   maxLength: 16,
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "NIK tidak boleh kosong";
+                  //     } else if (value.length != 16) {
+                  //       return "NIK yang anda masukan kurang dari 16 digit";
+                  //     }
 
-                      return null;
-                    },
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 12),
+                  //     return null;
+                  //   },
+                  //   keyboardType: TextInputType.number,
+                  // ),
+                  // const SizedBox(height: 12),
                   const LabelForm(label: "Nama Lengkap", isRequired: true),
                   const SizedBox(height: 5),
                   TextFormField(
@@ -358,334 +374,336 @@ class _PageFormPendaftaranState extends State<PageFormPendaftaran> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Alamat", isRequired: true),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ECalamat,
-                    decoration: textFieldDecoration(
-                      textHint: "Masukkan Alamat",
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Alamat tidak boleh kosong";
-                      }
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Alamat", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // TextFormField(
+                  //   controller: _ECalamat,
+                  //   decoration: textFieldDecoration(
+                  //     textHint: "Masukkan Alamat",
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "Alamat tidak boleh kosong";
+                  //     }
 
-                      return null;
-                    },
-                    maxLines: 5,
-                    minLines: 2,
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Provinsi", isRequired: true),
-                  const SizedBox(height: 5),
-                  DropdownSearch<dynamic>(
-                    asyncItems: (text) => getProvinsi(),
-                    itemAsString: (item) => item['nama_provinsi'].toString(),
-                    popupProps: PopupProps.menu(
-                      showSearchBox: true,
-                      menuProps: const MenuProps(),
-                      searchFieldProps: TextFieldProps(
-                        decoration: textFieldDecoration(
-                          textHint: "Cari Provinsi",
-                        ),
-                      ),
-                      loadingBuilder: (context, searchEntry) => loadingWidget(),
-                    ),
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih provinsi"),
-                    ),
-                    selectedItem: selectedProvinsi,
-                    onChanged: (item) {
-                      setState(() {
-                        selectedProvinsi = item;
-                        selectedKota = null;
-                        selectedKecamatan = null;
-                        selectedKelurahan = null;
-                        log(selectedProvinsi.toString());
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Kota", isRequired: true),
-                  const SizedBox(height: 5),
-                  DropdownSearch<dynamic>(
-                    asyncItems: (text) => getKota(),
-                    itemAsString: (item) => item['nama_kota'].toString(),
-                    popupProps: PopupProps.menu(
-                      showSearchBox: true,
-                      menuProps: const MenuProps(),
-                      searchFieldProps: TextFieldProps(
-                        decoration: textFieldDecoration(
-                          textHint: "Cari Kota",
-                        ),
-                      ),
-                      loadingBuilder: (context, searchEntry) => loadingWidget(),
-                    ),
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Kota"),
-                    ),
-                    selectedItem: selectedKota,
-                    onChanged: (item) {
-                      setState(() {
-                        selectedKota = item;
-                        selectedKecamatan = null;
-                        selectedKelurahan = null;
-                        log(selectedKota.toString());
-                      });
-                    },
-                    enabled: selectedProvinsi != null,
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Kecamatan", isRequired: true),
-                  const SizedBox(height: 5),
-                  DropdownSearch<dynamic>(
-                    asyncItems: (text) => getKecamatan(),
-                    itemAsString: (item) => item['nama_kecamatan'].toString(),
-                    popupProps: PopupProps.menu(
-                      showSearchBox: true,
-                      menuProps: const MenuProps(),
-                      searchFieldProps: TextFieldProps(
-                        decoration: textFieldDecoration(
-                          textHint: "Cari Kecamatan",
-                        ),
-                      ),
-                      loadingBuilder: (context, searchEntry) => loadingWidget(),
-                    ),
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Kecamatan"),
-                    ),
-                    selectedItem: selectedKecamatan,
-                    onChanged: (item) {
-                      setState(() {
-                        selectedKecamatan = item;
-                        selectedKelurahan = null;
-                        log(selectedKecamatan.toString());
-                      });
-                    },
-                    enabled: selectedKota != null,
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Kelurahan", isRequired: true),
-                  const SizedBox(height: 5),
-                  DropdownSearch<dynamic>(
-                    asyncItems: (text) => getKelurahan(),
-                    itemAsString: (item) => item['nama_kelurahan'].toString(),
-                    popupProps: PopupProps.menu(
-                      showSearchBox: true,
-                      menuProps: const MenuProps(),
-                      searchFieldProps: TextFieldProps(
-                        decoration: textFieldDecoration(
-                          textHint: "Cari Kelurahan",
-                        ),
-                      ),
-                      loadingBuilder: (context, searchEntry) => loadingWidget(),
-                    ),
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Kelurahan"),
-                    ),
-                    selectedItem: selectedKelurahan,
-                    onChanged: (item) {
-                      setState(() {
-                        selectedKelurahan = item;
-                        log(selectedKelurahan.toString());
-                      });
-                    },
-                    enabled: selectedKecamatan != null,
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Jenis Kelamin", isRequired: true),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Row(
-                        children: [
-                          Radio(
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: const VisualDensity(
-                              horizontal: VisualDensity.minimumDensity,
-                              vertical: VisualDensity.minimumDensity,
-                            ),
-                            value: "Laki-laki",
-                            groupValue: _selectedJK,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedJK = value.toString();
-                                log(_selectedJK.toString());
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 5),
-                          const Text("Laki-Laki"),
-                        ],
-                      ),
-                      const SizedBox(width: 12),
-                      Row(
-                        children: [
-                          Radio(
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: const VisualDensity(
-                              horizontal: VisualDensity.minimumDensity,
-                              vertical: VisualDensity.minimumDensity,
-                            ),
-                            value: "Perempuan",
-                            groupValue: _selectedJK,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedJK = value.toString();
-                                log(_selectedJK.toString());
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 5),
-                          const Text("Perempuan"),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Tempat Lahir", isRequired: true),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ECtempatLahir,
-                    decoration: textFieldDecoration(
-                      textHint: "Masukkan Tempat Lahir",
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Tempat Lahir tidak boleh kosong";
-                      }
+                  //     return null;
+                  //   },
+                  //   maxLines: 5,
+                  //   minLines: 2,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Provinsi", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // DropdownSearch<dynamic>(
+                  //   asyncItems: (text) => getProvinsi(),
+                  //   itemAsString: (item) => item['nama_provinsi'].toString(),
+                  //   popupProps: PopupProps.menu(
+                  //     showSearchBox: true,
+                  //     menuProps: const MenuProps(),
+                  //     searchFieldProps: TextFieldProps(
+                  //       decoration: textFieldDecoration(
+                  //         textHint: "Cari Provinsi",
+                  //       ),
+                  //     ),
+                  //     loadingBuilder: (context, searchEntry) => loadingWidget(),
+                  //   ),
+                  //   dropdownDecoratorProps: DropDownDecoratorProps(
+                  //     dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih provinsi"),
+                  //   ),
+                  //   selectedItem: selectedProvinsi,
+                  //   onChanged: (item) {
+                  //     setState(() {
+                  //       selectedProvinsi = item;
+                  //       selectedKota = null;
+                  //       selectedKecamatan = null;
+                  //       selectedKelurahan = null;
+                  //       log(selectedProvinsi.toString());
+                  //     });
+                  //   },
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Kota", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // DropdownSearch<dynamic>(
+                  //   asyncItems: (text) => getKota(),
+                  //   itemAsString: (item) => item['nama_kota'].toString(),
+                  //   popupProps: PopupProps.menu(
+                  //     showSearchBox: true,
+                  //     menuProps: const MenuProps(),
+                  //     searchFieldProps: TextFieldProps(
+                  //       decoration: textFieldDecoration(
+                  //         textHint: "Cari Kota",
+                  //       ),
+                  //     ),
+                  //     loadingBuilder: (context, searchEntry) => loadingWidget(),
+                  //   ),
+                  //   dropdownDecoratorProps: DropDownDecoratorProps(
+                  //     dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Kota"),
+                  //   ),
+                  //   selectedItem: selectedKota,
+                  //   onChanged: (item) {
+                  //     setState(() {
+                  //       selectedKota = item;
+                  //       selectedKecamatan = null;
+                  //       selectedKelurahan = null;
+                  //       log(selectedKota.toString());
+                  //     });
+                  //   },
+                  //   enabled: selectedProvinsi != null,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Kecamatan", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // DropdownSearch<dynamic>(
+                  //   asyncItems: (text) => getKecamatan(),
+                  //   itemAsString: (item) => item['nama_kecamatan'].toString(),
+                  //   popupProps: PopupProps.menu(
+                  //     showSearchBox: true,
+                  //     menuProps: const MenuProps(),
+                  //     searchFieldProps: TextFieldProps(
+                  //       decoration: textFieldDecoration(
+                  //         textHint: "Cari Kecamatan",
+                  //       ),
+                  //     ),
+                  //     loadingBuilder: (context, searchEntry) => loadingWidget(),
+                  //   ),
+                  //   dropdownDecoratorProps: DropDownDecoratorProps(
+                  //     dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Kecamatan"),
+                  //   ),
+                  //   selectedItem: selectedKecamatan,
+                  //   onChanged: (item) {
+                  //     setState(() {
+                  //       selectedKecamatan = item;
+                  //       selectedKelurahan = null;
+                  //       log(selectedKecamatan.toString());
+                  //     });
+                  //   },
+                  //   enabled: selectedKota != null,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Kelurahan", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // DropdownSearch<dynamic>(
+                  //   asyncItems: (text) => getKelurahan(),
+                  //   itemAsString: (item) => item['nama_kelurahan'].toString(),
+                  //   popupProps: PopupProps.menu(
+                  //     showSearchBox: true,
+                  //     menuProps: const MenuProps(),
+                  //     searchFieldProps: TextFieldProps(
+                  //       decoration: textFieldDecoration(
+                  //         textHint: "Cari Kelurahan",
+                  //       ),
+                  //     ),
+                  //     loadingBuilder: (context, searchEntry) => loadingWidget(),
+                  //   ),
+                  //   dropdownDecoratorProps: DropDownDecoratorProps(
+                  //     dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Kelurahan"),
+                  //   ),
+                  //   selectedItem: selectedKelurahan,
+                  //   onChanged: (item) {
+                  //     setState(() {
+                  //       selectedKelurahan = item;
+                  //       log(selectedKelurahan.toString());
+                  //     });
+                  //   },
+                  //   enabled: selectedKecamatan != null,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Jenis Kelamin", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // Row(
+                  //   children: [
+                  //     Row(
+                  //       children: [
+                  //         Radio(
+                  //           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  //           visualDensity: const VisualDensity(
+                  //             horizontal: VisualDensity.minimumDensity,
+                  //             vertical: VisualDensity.minimumDensity,
+                  //           ),
+                  //           value: "Laki-laki",
+                  //           groupValue: _selectedJK,
+                  //           onChanged: (value) {
+                  //             setState(() {
+                  //               _selectedJK = value.toString();
+                  //               log(_selectedJK.toString());
+                  //             });
+                  //           },
+                  //         ),
+                  //         const SizedBox(width: 5),
+                  //         const Text("Laki-Laki"),
+                  //       ],
+                  //     ),
+                  //     const SizedBox(width: 12),
+                  //     Row(
+                  //       children: [
+                  //         Radio(
+                  //           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  //           visualDensity: const VisualDensity(
+                  //             horizontal: VisualDensity.minimumDensity,
+                  //             vertical: VisualDensity.minimumDensity,
+                  //           ),
+                  //           value: "Perempuan",
+                  //           groupValue: _selectedJK,
+                  //           onChanged: (value) {
+                  //             setState(() {
+                  //               _selectedJK = value.toString();
+                  //               log(_selectedJK.toString());
+                  //             });
+                  //           },
+                  //         ),
+                  //         const SizedBox(width: 5),
+                  //         const Text("Perempuan"),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Tempat Lahir", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // TextFormField(
+                  //   controller: _ECtempatLahir,
+                  //   decoration: textFieldDecoration(
+                  //     textHint: "Masukkan Tempat Lahir",
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "Tempat Lahir tidak boleh kosong";
+                  //     }
 
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Tanggal Lahir", isRequired: true),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ECtanggalLahir,
-                    decoration: textFieldDecoration(
-                      textHint: "Masukkan Tanggal Lahir",
-                    ),
-                    onTap: () {
-                      showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1945),
-                        lastDate: DateTime.now(),
-                      ).then(
-                        (value) {
-                          if (value != null) {
-                            selectedDate = value;
-                            _ECtanggalLahir.text = parseDateInd(selectedDate.toString(), "EEEE, dd MMMM yyyy");
-                          }
-                        },
-                      );
-                    },
-                    readOnly: true,
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Pendidikan", isRequired: true),
-                  const SizedBox(height: 5),
-                  DropdownSearch<dynamic>(
-                    asyncItems: (text) => getPendidikan(),
-                    itemAsString: (item) => item['pendidikan_pegawai'].toString(),
-                    popupProps: PopupProps.menu(
-                      showSearchBox: true,
-                      menuProps: const MenuProps(),
-                      searchFieldProps: TextFieldProps(
-                        decoration: textFieldDecoration(
-                          textHint: "Cari Pendidikan",
-                        ),
-                      ),
-                      loadingBuilder: (context, searchEntry) => loadingWidget(),
-                    ),
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Pendidikan"),
-                    ),
-                    selectedItem: selectedPendidikan,
-                    onChanged: (item) {
-                      setState(() {
-                        selectedPendidikan = item;
-                        log(selectedPendidikan.toString());
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  const LabelForm(label: "INFORMASI BANK"),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Bank", isRequired: true),
-                  const SizedBox(height: 5),
-                  DropdownSearch<dynamic>(
-                    asyncItems: (text) => getBank(),
-                    itemAsString: (item) => item.toString(),
-                    selectedItem: selectedBank,
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Bank"),
-                    ),
-                    onChanged: (item) {
-                      setState(() {
-                        selectedBank = item;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "No Rekening Pegawai", isRequired: true),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ECrekening,
-                    decoration: textFieldDecoration(
-                      textHint: "Masukkan No Rekening",
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "No rekening tidak boleh kosong";
-                      }
+                  //     return null;
+                  //   },
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Tanggal Lahir", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // TextFormField(
+                  //   controller: _ECtanggalLahir,
+                  //   decoration: textFieldDecoration(
+                  //     textHint: "Masukkan Tanggal Lahir",
+                  //   ),
+                  //   onTap: () {
+                  //     showDatePicker(
+                  //       context: context,
+                  //       initialDate: DateTime.now(),
+                  //       firstDate: DateTime(1945),
+                  //       lastDate: DateTime.now(),
+                  //     ).then(
+                  //       (value) {
+                  //         if (value != null) {
+                  //           selectedDate = value;
+                  //           _ECtanggalLahir.text = parseDateInd(selectedDate.toString(), "EEEE, dd MMMM yyyy");
+                  //         }
+                  //       },
+                  //     );
+                  //   },
+                  //   readOnly: true,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Pendidikan", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // DropdownSearch<dynamic>(
+                  //   asyncItems: (text) => getPendidikan(),
+                  //   itemAsString: (item) => item['pendidikan_pegawai'].toString(),
+                  //   popupProps: PopupProps.menu(
+                  //     showSearchBox: true,
+                  //     menuProps: const MenuProps(),
+                  //     searchFieldProps: TextFieldProps(
+                  //       decoration: textFieldDecoration(
+                  //         textHint: "Cari Pendidikan",
+                  //       ),
+                  //     ),
+                  //     loadingBuilder: (context, searchEntry) => loadingWidget(),
+                  //   ),
+                  //   dropdownDecoratorProps: DropDownDecoratorProps(
+                  //     dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Pendidikan"),
+                  //   ),
+                  //   selectedItem: selectedPendidikan,
+                  //   onChanged: (item) {
+                  //     setState(() {
+                  //       selectedPendidikan = item;
+                  //       log(selectedPendidikan.toString());
+                  //     });
+                  //   },
+                  // ),
+                  // const SizedBox(height: 20),
+                  // const LabelForm(label: "INFORMASI BANK"),
+                  // const Divider(),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Bank", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // DropdownSearch<dynamic>(
+                  //   asyncItems: (text) => getBank(),
+                  //   itemAsString: (item) => item.toString(),
+                  //   selectedItem: selectedBank,
+                  //   dropdownDecoratorProps: DropDownDecoratorProps(
+                  //     dropdownSearchDecoration: textFieldDecoration(textHint: "Pilih Bank"),
+                  //   ),
+                  //   onChanged: (item) {
+                  //     setState(() {
+                  //       selectedBank = item;
+                  //     });
+                  //   },
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "No Rekening Pegawai", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // TextFormField(
+                  //   controller: _ECrekening,
+                  //   decoration: textFieldDecoration(
+                  //     textHint: "Masukkan No Rekening",
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "No rekening tidak boleh kosong";
+                  //     }
 
-                      return null;
-                    },
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 12),
-                  const LabelForm(label: "Nama Pemilik Rekening", isRequired: true),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ECnamaPemilikR,
-                    decoration: textFieldDecoration(
-                      textHint: "Masukkan Nama Pemilik Rekening",
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Nama Pemilik Rekening tidak boleh kosong";
-                      }
+                  //     return null;
+                  //   },
+                  //   keyboardType: TextInputType.number,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // const LabelForm(label: "Nama Pemilik Rekening", isRequired: true),
+                  // const SizedBox(height: 5),
+                  // TextFormField(
+                  //   controller: _ECnamaPemilikR,
+                  //   decoration: textFieldDecoration(
+                  //     textHint: "Masukkan Nama Pemilik Rekening",
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "Nama Pemilik Rekening tidak boleh kosong";
+                  //     }
 
-                      return null;
-                    },
-                  ),
+                  //     return null;
+                  //   },
+                  // ),
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (selectedProvinsi == null) {
-                            showToast("Provinsi tidak boleh kosong");
-                          } else if (selectedKota == null) {
-                            showToast("Kota tidak boleh kosong");
-                          } else if (selectedKecamatan == null) {
-                            showToast("Kecamatan tidak boleh kosong");
-                          } else if (selectedKelurahan == null) {
-                            showToast("Kelurahan tidak boleh kosong");
-                          } else if (selectedDate == null) {
-                            showToast("Tanggal lahir tidak boleh kosong");
-                          } else if (selectedPendidikan == null) {
-                            showToast("Pendidikan pegawai tidak boleh kosong");
-                          } else if (selectedBank == "") {
-                            showToast("Bank tidak boleh kosong");
-                          } else {
-                            simpanPendaftaran();
-                          }
+                          // if (selectedProvinsi == null) {
+                          //   showToast("Provinsi tidak boleh kosong");
+                          // } else if (selectedKota == null) {
+                          //   showToast("Kota tidak boleh kosong");
+                          // } else if (selectedKecamatan == null) {
+                          //   showToast("Kecamatan tidak boleh kosong");
+                          // } else if (selectedKelurahan == null) {
+                          //   showToast("Kelurahan tidak boleh kosong");
+                          // } else if (selectedDate == null) {
+                          //   showToast("Tanggal lahir tidak boleh kosong");
+                          // } else if (selectedPendidikan == null) {
+                          //   showToast("Pendidikan pegawai tidak boleh kosong");
+                          // } else if (selectedBank == "") {
+                          //   showToast("Bank tidak boleh kosong");
+                          // } else {
+                          //   simpanPendaftaran();
+                          // }
+
+                          simpanPendaftaran();
                         }
                       },
                       child: const Text("Daftar"),
