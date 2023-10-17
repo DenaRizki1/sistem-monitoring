@@ -10,10 +10,12 @@ import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/utils/routes/app_navigator.dart';
 import 'package:absentip/wigets/alert_dialog_confirm_widget.dart';
+import 'package:absentip/wigets/alert_dialog_ok_widget.dart';
 import 'package:absentip/wigets/appbar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'utils/my_colors.dart';
 import 'utils/constants.dart';
@@ -50,7 +52,33 @@ class _PageProfilState extends State<PageProfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget("Profil", leading: null),
+      appBar: appBarWidget("Profil", leading: null, action: [
+        PopupMenuButton(
+            icon: Icon(
+              MdiIcons.dotsVertical,
+              color: Colors.white,
+            ),
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text("Hapus Akun"),
+                ),
+              ];
+            },
+            onSelected: (value) async {
+              if (value == 0) {
+                final result = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => const AlertDialogConfirmWidget(
+                      message: "Saat menghapus akun maka semua data akan terhapus secara permanen dan tidak dapat direcovery kembali.\nApakah anda yakin akan menghapus akun ini?"),
+                );
+                if (result ?? false) {
+                  hapusaAkunFreelance();
+                }
+              }
+            }),
+      ]),
       body: Stack(
         children: [
           SizedBox(
@@ -443,6 +471,39 @@ class _PageProfilState extends State<PageProfil> {
         );
       } else {
         showToast(response['message'].toString());
+      }
+    } else {
+      showToast("Terjadi kesalahan");
+    }
+  }
+
+  Future<void> hapusaAkunFreelance() async {
+    showLoading();
+    final response = await ApiConnect.instance.request(
+      requestMethod: RequestMethod.post,
+      url: EndPoint.hapusAkunFreelance,
+      params: {
+        'hash_user': await getPrefrence(HASH_USER) ?? "",
+        'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
+      },
+    );
+
+    dismissLoading();
+
+    if (response != null) {
+      if (response['success']) {
+        await clearUserSession();
+        AppNavigator.instance.pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const PageLogin(),
+          ),
+          (p0) => false,
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialogOkWidget(message: response['message'].toString()),
+        );
       }
     } else {
       showToast("Terjadi kesalahan");

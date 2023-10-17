@@ -4,6 +4,7 @@ abstract class EndPoint {
   static String login = '${getBaseUrl()}/auth_pengajar/login';
   static String checkLogin = '${getBaseUrl()}/auth_pengajar/checkLogin';
   static String logout = '${getBaseUrl()}/auth_pengajar/logout';
+  static String hapusAkunFreelance = '${getBaseUrl()}/auth_pengajar/hapusAkunFreelance';
   static String gantiPassword = '${getBaseUrl()}/auth_pengajar/gantiPassword';
   static String termCondition = '${getBaseUrl()}/auth_pengajar/termCondition';
   static String policyPrivacy = '${getBaseUrl()}/auth_pengajar/policyPrivacy';

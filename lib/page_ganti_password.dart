@@ -201,6 +201,7 @@ class _PageGantiPasswordState extends State<PageGantiPassword> {
     if (response != null) {
       showToast(response['message'].toString());
       if (response['success']) {
+        await clearUserSession();
         AppNavigator.instance.pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const PageLogin(),
