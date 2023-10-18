@@ -24,13 +24,40 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FDAllFilesDownloadedMessage</key>
+	<string>All files have been downloaded</string>
+	<key>FDMaximumConcurrentTasks</key>
+	<integer>5</integer>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FirebaseScreenReportingEnabled</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Izin kamera diperlukan untuk mengirim foto</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Izin lokasi diperlukan untuk mengetahui lokasi pengguna pada saat buka dan dilatarbelakang.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Izin lokasi diperlukan untuk mengetahui lokasi pengguna pada saat buka dilatarbelakang.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Izin lokasi diperlukan untuk mengetahui lokasi pengguna pada saat buka.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Izin galery diperlukan untuk mengirim gambar</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -48,40 +75,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
-	<key>FirebaseScreenReportingEnabled</key>
-	<true/>
-	<key>FirebaseAppDelegateProxyEnabled</key>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FDAllFilesDownloadedMessage</key>
-	<string>All files have been downloaded</string>
-	<key>FDMaximumConcurrentTasks</key>
-	<integer>5</integer>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Izin kamera dibutuhkan untuk melakukan absen</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Need microphone access for uploading audio</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Izin dibutuhkan untuk mengupload profil pengguna</string>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application requires location services to work</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application requires location services to work</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This application requires location services to work</string>
-	<key>NSContactsUsageDescription</key>
-	<string>This application requires location services to work</string>
 </dict>
 </plist>
