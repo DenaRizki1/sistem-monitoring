@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/end_point.dart';
@@ -58,6 +59,7 @@ class _PageLoginState extends State<PageLogin> {
     }
 
     final tokenNotif = await FirebaseMessaging.instance.getToken();
+    log(tokenNotif.toString());
     prefs.setString(TOKEN_NOTIF, tokenNotif ?? "");
   }
 

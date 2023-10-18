@@ -7,4 +7,5 @@ class AppImages {
   static const masukIcon = './images/masuk_icon.png';
   static const pulangIcon = './images/pulang_icon.png';
   static const notifikasi = './images/notification.png';
+  static const avatar = './images/avatar_place.png';
 }

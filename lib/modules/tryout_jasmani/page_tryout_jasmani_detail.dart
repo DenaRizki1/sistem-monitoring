@@ -5,6 +5,7 @@ import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
 import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
+import 'package:absentip/modules/tryout_jasmani/page_list_absen_jasmani.dart';
 import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_foto.dart';
 import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_scan.dart';
 import 'package:absentip/utils/app_color.dart';
@@ -190,6 +191,25 @@ class _PageTryoutJasmaniDetailState extends State<PageTryoutJasmaniDetail> {
                                         );
                                       },
                                       child: const Text('Lihat QR Absen'),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        AppNavigator.instance.push(
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return const PageListAbsenJasmani();
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                      ),
+                                      child: const Text('Lihat Absen Siswa'),
                                     ),
                                   ),
                                 ],
