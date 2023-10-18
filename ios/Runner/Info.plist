@@ -42,15 +42,15 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Izin kamera diperlukan untuk mengirim foto</string>
+	<string>Ini memungkinkan Anda mengambil gambar dan merekam video langsung dari kamera Anda di dalam aplikasi. Anda dapat menggunakan gambar yang diambil untuk mengatur gambar profil Anda atau ketika Anda akan melakukan absensi harian, kegiatan, tryout jasmani, tryout psikologi, tryout akademik, pengajuan lembur dan laporan aktivitas. Aplikasi ini tidak menggunakan gambar dan video apa pun yang diambil untuk tujuan lain apa pun.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Izin lokasi diperlukan untuk mengetahui lokasi pengguna pada saat buka dan dilatarbelakang.</string>
+	<string>Ini memungkinkan Anda mengambil lokasi di dalam aplikasi. Anda dapat menggunakan lokasi yang diambil untuk melakukan login di dalam aplikasi atau ketika Anda akan melakukan absensi harian, kegiatan, tryout jasmani, tryout psikologi, tryout akademik. Aplikasi ini tidak menggunakan lokasi yang diambil untuk tujuan lain apa pun.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Izin lokasi diperlukan untuk mengetahui lokasi pengguna pada saat buka dilatarbelakang.</string>
+	<string>Ini memungkinkan Anda mengambil lokasi di dalam aplikasi. Anda dapat menggunakan lokasi yang diambil untuk melakukan login di dalam aplikasi atau ketika Anda akan melakukan absensi harian, kegiatan, tryout jasmani, tryout psikologi, tryout akademik. Aplikasi ini tidak menggunakan lokasi yang diambil untuk tujuan lain apa pun.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Izin lokasi diperlukan untuk mengetahui lokasi pengguna pada saat buka.</string>
+	<string>Ini memungkinkan Anda mengambil lokasi di dalam aplikasi. Anda dapat menggunakan lokasi yang diambil untuk melakukan login di dalam aplikasi atau ketika Anda akan melakukan absensi harian, kegiatan, tryout jasmani, tryout psikologi, tryout akademik. Aplikasi ini tidak menggunakan lokasi yang diambil untuk tujuan lain apa pun.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Izin galery diperlukan untuk mengirim gambar</string>
+	<string>Ini memungkinkan Anda mengambil gambar dari galeri Anda di dalam aplikasi. Anda dapat menggunakan gambar yang diambil untuk mengatur gambar profil Anda atau ketika Anda akan melakukan pengajuan lembur dan laporan aktivitas. Aplikasi ini tidak menggunakan gambar apa pun yang diambil untuk tujuan lain apa pun.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
