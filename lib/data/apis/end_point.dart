@@ -50,16 +50,26 @@ abstract class EndPoint {
   static String tryoutDetailJasmani = '${getBaseUrl()}/tryout_jasmani_v2/tryoutDetailJasmani';
   static String cekTryoutJasmani = '${getBaseUrl()}/tryout_jasmani_v2/cekTryoutJasmani';
   static String simpanAbsenTryoutJasmani = '${getBaseUrl()}/tryout_jasmani_v2/simpanAbsenTryoutJasmani';
+  static String daftarSiswaJasmani = '${getBaseUrl()}/tryout_jasmani_v2/daftarSiswaJasmani';
+  static String daftarSiswaDetailJasmani = '${getBaseUrl()}/tryout_jasmani_v2/daftarSiswaDetailJasmani';
+  static String verifAbsenSiswaJasmani = '${getBaseUrl()}/tryout_jasmani_v2/verifAbsenSiswaJasmani';
 
-  static String tryoutPsikologi = '${getBaseUrl()}/tryout_psikologi/tryoutPsikologi';
-  static String tryoutDetailPsikologi = '${getBaseUrl()}/tryout_psikologi/tryoutDetailPsikologi';
-  static String cekTryoutPsikologi = '${getBaseUrl()}/tryout_psikologi/cekTryoutPsikologi';
-  static String simpanAbsenTryoutPsikologi = '${getBaseUrl()}/tryout_psikologi/simpanAbsenTryoutPsikologi';
+  static String tryoutKategoriPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/tryoutKategoriPsikologi';
+  static String tryoutPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/tryoutPsikologi';
+  static String tryoutDetailPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/tryoutDetailPsikologi';
+  static String cekTryoutPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/cekTryoutPsikologi';
+  static String simpanAbsenTryoutPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/simpanAbsenTryoutPsikologi';
+  static String daftarSiswaPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/daftarSiswaPsikologi';
+  static String daftarSiswaDetailPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/daftarSiswaDetailPsikologi';
+  static String verifAbsenSiswaPsikologi = '${getBaseUrl()}/tryout_psikologi_v2/verifAbsenSiswaPsikologi';
 
   static String tryoutAkademik = '${getBaseUrl()}/tryout_akademik/tryoutAkademik';
   static String tryoutDetailAkademik = '${getBaseUrl()}/tryout_akademik/tryoutDetailAkademik';
   static String cekTryoutAkademik = '${getBaseUrl()}/tryout_akademik/cekTryoutAkademik';
   static String simpanAbsenTryoutAkademik = '${getBaseUrl()}/tryout_akademik/simpanAbsenTryoutAkademik';
+  static String daftarSiswaAkademik = '${getBaseUrl()}/tryout_akademik/daftarSiswaAkademik';
+  static String daftarSiswaDetailAkademik = '${getBaseUrl()}/tryout_akademik/daftarSiswaDetailAkademik';
+  static String verifAbsenSiswaAkademik = '${getBaseUrl()}/tryout_akademik/verifAbsenSiswaAkademik';
 
   static String kegiatan = '${getBaseUrl()}/kegiatan/kegiatan';
   static String kegiatanDetail = '${getBaseUrl()}/kegiatan/kegiatanDetail';

@@ -3,7 +3,7 @@ import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
 import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_detail.dart';
+import 'package:absentip/modules/tryout_akademik/page_tryout_akademik_detail.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/constants.dart';
 import 'package:absentip/utils/helpers.dart';
@@ -175,7 +175,7 @@ class _PageTryoutAkademikState extends State<PageTryoutAkademik> {
                                 onTap: () {
                                   AppNavigator.instance.push(
                                     MaterialPageRoute(
-                                      builder: (context) => PageTryoutJasmaniDetail(
+                                      builder: (context) => PageTryoutAkademikDetail(
                                         kdTryout: kegiatan['kd_tryout'].toString(),
                                       ),
                                     ),

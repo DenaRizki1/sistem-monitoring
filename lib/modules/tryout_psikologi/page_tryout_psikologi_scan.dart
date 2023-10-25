@@ -47,7 +47,7 @@ class _PageTryoutPsikologiScanState extends State<PageTryoutPsikologiScan> {
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.cekTryoutJasmani,
+      url: EndPoint.cekTryoutPsikologi,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
@@ -103,14 +103,16 @@ class _PageTryoutPsikologiScanState extends State<PageTryoutPsikologiScan> {
     DateTime dateTime = DateTime.now();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.simpanAbsenTryoutJasmani,
+      url: EndPoint.simpanAbsenTryoutPsikologi,
       params: {
         'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
         'hash_user': await getPrefrence(HASH_USER) ?? "",
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
-        'jenis_kegiatan': _tryout['jenis_kegiatan'].toString(),
-        'kd_tryout': _tryout['kd_tryout'].toString(),
+        'kd_jadwal': _tryout['kd_jadwal'].toString(),
+        'kd_lokasi_absen': _tryout['id_lokasi'].toString(),
+        'status_absen': _tryout['status_absen'].toString(),
+        'kd_tanda': _tryout['kd_tanda'].toString(),
         'lat': latitude.toString(),
         'long': longitude.toString(),
       },
@@ -160,8 +162,8 @@ class _PageTryoutPsikologiScanState extends State<PageTryoutPsikologiScan> {
       if (barcodeScanRes == "-1") {
         AppNavigator.instance.pop();
       } else {
-        log(_tryout['kd_tryout'].toString());
-        if (barcodeScanRes == _tryout['kd_tryout'].toString()) {
+        log(_tryout['kd_jadwal'].toString());
+        if (barcodeScanRes == _tryout['kd_jadwal'].toString()) {
           simpanAbsen();
         } else {
           final result = await showDialog<bool>(

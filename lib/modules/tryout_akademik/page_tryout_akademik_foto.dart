@@ -202,7 +202,7 @@ class _PageTryoutAkademikFotoState extends State<PageTryoutAkademikFoto> {
 
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.uploadFile(
-      EndPoint.simpanAbsenTryoutJasmani,
+      EndPoint.simpanAbsenTryoutAkademik,
       "foto",
       resultPath,
       {
@@ -210,8 +210,10 @@ class _PageTryoutAkademikFotoState extends State<PageTryoutAkademikFoto> {
         'hash_user': pref.getString(HASH_USER).toString(),
         'time_zone_name': dateTime.timeZoneName,
         'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
-        'jenis_kegiatan': _tryout['jenis_kegiatan'].toString(),
         'kd_tryout': _tryout['kd_tryout'].toString(),
+        'kd_lokasi_absen': _tryout['id_lokasi'].toString(),
+        'status_absen': _tryout['status_absen'].toString(),
+        'kd_tanda': _tryout['kd_tanda'].toString(),
         'lat': latitude.toString(),
         'long': longitude.toString(),
       },

@@ -7,6 +7,7 @@ import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
 import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_foto.dart';
 import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_scan.dart';
+import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_siswa.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/utils/constants.dart';
@@ -257,6 +258,22 @@ class _PageTryoutJasmaniDetailState extends State<PageTryoutJasmaniDetail> {
                                             }
                                           },
                                           child: const Text('Lihat Lokasi Map'),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            AppNavigator.instance.push(
+                                              MaterialPageRoute(
+                                                builder: (context) => PageTryoutJasmaniSiswa(
+                                                  kdTryout: itemKegiatan['kd_tryout'].toString(),
+                                                  kdLokasiAbsen: itemKegiatan['kd_lokasi_absen'].toString(),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: const Text('Daftar Siswa'),
                                         ),
                                       ),
                                       Visibility(
