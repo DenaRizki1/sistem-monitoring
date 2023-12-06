@@ -41,13 +41,13 @@ class _PageTryoutAkademikScanState extends State<PageTryoutAkademikScan> {
     super.dispose();
   }
 
-  Future<Map?> cekKegiatan() async {
+  Future<Map?> cekTryout() async {
     showLoading();
 
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.cekTryoutJasmani,
+      url: EndPoint.cekTryoutAkademik,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
@@ -69,86 +69,93 @@ class _PageTryoutAkademikScanState extends State<PageTryoutAkademikScan> {
   Future<void> simpanAbsen() async {
     await showLoading(dismissOnTap: false);
 
-    double latitude = 0.0;
-    double longitude = 0.0;
-    // ignore: unused_local_variable
-    String address = "";
+    try {
+      double latitude = 0.0;
+      double longitude = 0.0;
+      // ignore: unused_local_variable
+      String address = "";
 
-    final _currentLocation = await LocationService.instance.getCurrentLocation(context);
-    if (_currentLocation != null) {
-      latitude = _currentLocation.latitude;
-      longitude = _currentLocation.longitude;
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        _currentLocation.latitude,
-        _currentLocation.longitude,
-        localeIdentifier: "id_ID",
-      );
-      if (placemarks.isNotEmpty) {
-        Placemark placeMark = placemarks[0];
-        if (mounted) {
-          setState(() {
-            address =
-                "${placeMark.street}, ${placeMark.subLocality}, ${placeMark.locality}, ${placeMark.subAdministrativeArea}, ${placeMark.administrativeArea}, ${placeMark.country}, ${placeMark.postalCode}";
-          });
+      final _currentLocation = await LocationService.instance.getCurrentLocation(context);
+      if (_currentLocation != null) {
+        latitude = _currentLocation.latitude;
+        longitude = _currentLocation.longitude;
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          _currentLocation.latitude,
+          _currentLocation.longitude,
+          localeIdentifier: "id_ID",
+        );
+        if (placemarks.isNotEmpty) {
+          Placemark placeMark = placemarks[0];
+          if (mounted) {
+            setState(() {
+              address =
+                  "${placeMark.street}, ${placeMark.subLocality}, ${placeMark.locality}, ${placeMark.subAdministrativeArea}, ${placeMark.administrativeArea}, ${placeMark.country}, ${placeMark.postalCode}";
+            });
+          }
+        } else {
+          showToast("Lokasi tidak ditemukan");
+          return;
         }
       } else {
-        showToast("Lokasi tidak ditemukan");
+        showToast("Koordinat tidak ditemukan");
         return;
       }
-    } else {
-      showToast("Koordinat tidak ditemukan");
-      return;
-    }
 
-    DateTime dateTime = DateTime.now();
-    final response = await ApiConnect.instance.request(
-      requestMethod: RequestMethod.post,
-      url: EndPoint.simpanAbsenTryoutJasmani,
-      params: {
-        'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
-        'hash_user': await getPrefrence(HASH_USER) ?? "",
-        'time_zone_name': dateTime.timeZoneName,
-        'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
-        'jenis_kegiatan': _tryout['jenis_kegiatan'].toString(),
-        'kd_tryout': _tryout['kd_tryout'].toString(),
-        'lat': latitude.toString(),
-        'long': longitude.toString(),
-      },
-    );
+      DateTime dateTime = DateTime.now();
+      final response = await ApiConnect.instance.request(
+        requestMethod: RequestMethod.post,
+        url: EndPoint.simpanAbsenTryoutAkademik,
+        params: {
+          'token_auth': await getPrefrence(TOKEN_AUTH) ?? "",
+          'hash_user': await getPrefrence(HASH_USER) ?? "",
+          'time_zone_name': dateTime.timeZoneName,
+          'time_zone_offset': dateTime.timeZoneOffset.inHours.toString(),
+          'kd_tryout': _tryout['kd_tryout'].toString(),
+          'kd_lokasi_absen': _tryout['id_lokasi'].toString(),
+          'status_absen': _tryout['status_absen'].toString(),
+          'kd_tanda': _tryout['kd_tanda'].toString(),
+          'lat': latitude.toString(),
+          'long': longitude.toString(),
+        },
+      );
 
-    dismissLoading();
+      dismissLoading();
 
-    if (response != null) {
-      if (response['success']) {
-        final result = await showDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialogOkWidget(
-            message: response['message'].toString(),
-          ),
-        );
-        if (result ?? false) {
-          AppNavigator.instance.pop();
-        }
-      } else {
-        switch (response['code'].toString()) {
-          case "0":
-            showToast(response['message'].toString());
-            break;
+      if (response != null) {
+        if (response['success']) {
+          final result = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialogOkWidget(
+              message: response['message'].toString(),
+            ),
+          );
+          if (result ?? false) {
+            AppNavigator.instance.pop();
+          }
+        } else {
+          switch (response['code'].toString()) {
+            case "0":
+              showToast(response['message'].toString());
+              break;
 
-          case "1":
-            showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialogOkWidget(
-                message: response['message'].toString(),
-              ),
-            );
-            break;
+            case "1":
+              showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialogOkWidget(
+                  message: response['message'].toString(),
+                ),
+              );
+              break;
 
-          default:
-            showToast(response['message'].toString());
+            default:
+              showToast(response['message'].toString());
+          }
         }
       }
+    } catch (e) {
+      log(e.toString());
+      dismissLoading();
     }
   }
 

@@ -1,10 +1,13 @@
+import 'dart:developer';
+
 import 'package:absentip/data/apis/api_connect.dart';
 import 'package:absentip/data/apis/api_response.dart';
 import 'package:absentip/data/apis/end_point.dart';
 import 'package:absentip/data/enums/api_status.dart';
 import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_foto.dart';
-import 'package:absentip/modules/tryout_jasmani/page_tryout_jasmani_scan.dart';
+import 'package:absentip/modules/tryout_akademik/page_tryout_akademik_foto.dart';
+import 'package:absentip/modules/tryout_akademik/page_tryout_akademik_scan.dart';
+import 'package:absentip/modules/tryout_akademik/page_tryout_akademik_siswa.dart';
 import 'package:absentip/utils/app_color.dart';
 import 'package:absentip/utils/app_images.dart';
 import 'package:absentip/utils/constants.dart';
@@ -54,7 +57,7 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
     final pref = await SharedPreferences.getInstance();
     final response = await ApiConnect.instance.request(
       requestMethod: RequestMethod.post,
-      url: EndPoint.tryoutDetailJasmani,
+      url: EndPoint.tryoutDetailAkademik,
       params: {
         'token_auth': pref.getString(TOKEN_AUTH) ?? "",
         'hash_user': pref.getString(HASH_USER) ?? "",
@@ -95,7 +98,7 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget("Detail Kegiatan"),
+      appBar: appBarWidget("Detail Tryout"),
       body: Stack(
         children: [
           SizedBox(
@@ -167,12 +170,29 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
                                   ),
                                   const Divider(height: 1),
                                   const SizedBox(height: 8),
-                                  itemDetail(true, "Jadwal", kegiatan['nama_jadwal'].toString()),
+                                  itemDetail(true, "Jadwal", kegiatan['nama_tryout'].toString()),
                                   itemDetail(false, "Tanggal", parseDateInd(kegiatan['tgl_pegawai_jadwal'].toString(), "dd MMMM yyyy")),
                                   itemDetail(true, "Jam Masuk", parseDateInd(kegiatan['jam_masuk'].toString(), "HH:mm") + " WIB"),
                                   itemDetail(false, "Jam Pulang", parseDateInd(kegiatan['jam_pulang'].toString(), "HH:mm") + " WIB"),
                                   itemDetail(true, "Lokasi", kegiatan['nama_lokasi'].toString()),
                                   itemDetail(false, "Deskripsi Lokasi", kegiatan['deskripsi_lokasi'].toString()),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        log(kegiatan['qr_absen'].toString());
+                                        AppNavigator.instance.push(
+                                          MaterialPageRoute(
+                                            builder: (context) => ShowImagePage(
+                                              judul: "QR Absen",
+                                              url: kegiatan['qr_absen'].toString(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Lihat QR Absen'),
+                                    ),
+                                  ),
                                   SizedBox(
                                     width: double.infinity,
                                     child: ElevatedButton(
@@ -190,6 +210,21 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
                                         }
                                       },
                                       child: const Text('Lihat Lokasi Map'),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        AppNavigator.instance.push(
+                                          MaterialPageRoute(
+                                            builder: (context) => PageTryoutAkademikSiswa(
+                                              kdTryout: kegiatan['kd_tryout'].toString(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Daftar Siswa'),
                                     ),
                                   ),
                                   Visibility(
@@ -213,7 +248,7 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
                                         child: Text(kegiatan['text_absen'].toString()),
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -277,7 +312,7 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
                   AppNavigator.instance.pop();
                   AppNavigator.instance
                       .push(MaterialPageRoute(
-                        builder: (context) => PageTryoutJasmaniFoto(tryout: dataTryout),
+                        builder: (context) => PageTryoutAkademikFoto(tryout: dataTryout),
                       ))
                       .then(
                         (value) => getKegiatan(),
@@ -291,7 +326,7 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
                   AppNavigator.instance.pop();
                   AppNavigator.instance
                       .push(MaterialPageRoute(
-                        builder: (context) => PageTryoutJasmaniScan(tryout: dataTryout),
+                        builder: (context) => PageTryoutAkademikScan(tryout: dataTryout),
                       ))
                       .then(
                         (value) => getKegiatan(),
@@ -341,7 +376,7 @@ class _PageTryoutAkademikDetailState extends State<PageTryoutAkademikDetail> {
             const SizedBox(height: 8),
             Column(
               children: [
-                itemDetail(true, "Waktu Absen", parseDateInd(absen['tgl_absen'].toString() + " " + absen['jam_absen'].toString(), "dd MMM yyyy | HH:mm")),
+                itemDetail(true, "Waktu Absen", parseDateInd(absen['tanggal_absen'].toString() + " " + absen['jam_absen'].toString(), "dd MMM yyyy | HH:mm")),
                 itemDetail(false, "Metode Absen", absen['ket_metode'].toString()),
                 Visibility(
                   visible: absen['metode'].toString() == "2",

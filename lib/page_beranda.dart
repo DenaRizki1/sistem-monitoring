@@ -502,7 +502,7 @@ class _PageBerandaState extends State<PageBeranda> {
                           AppNavigator.instance.push(
                             MaterialPageRoute(
                               builder: (context) => PageTryoutPsikologiDetail(
-                                kdTryout: element['kd_tryout'].toString(),
+                                kdJadwal: element['kd_tryout'].toString(),
                               ),
                             ),
                           );
