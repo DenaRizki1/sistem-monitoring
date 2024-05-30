@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:absentip/utils/helpers.dart';
-import 'package:absentip/wigets/appbar_widget.dart';
+import 'package:sistem_monitoring/utils/helpers.dart';
+import 'package:sistem_monitoring/wigets/appbar_widget.dart';
 import 'package:advance_pdf_viewer_fork/advance_pdf_viewer_fork.dart';
 import 'package:flutter/material.dart';
 

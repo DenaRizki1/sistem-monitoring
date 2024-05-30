@@ -1,4 +1,4 @@
-import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

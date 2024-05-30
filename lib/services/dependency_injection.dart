@@ -1,8 +1,8 @@
 import 'dart:isolate';
 
-import 'package:absentip/utils/my_custom_timeago_messages.dart';
-import 'package:absentip/utils/constants.dart';
-import 'package:absentip/utils/sessions.dart';
+import 'package:sistem_monitoring/utils/my_custom_timeago_messages.dart';
+import 'package:sistem_monitoring/utils/constants.dart';
+import 'package:sistem_monitoring/utils/sessions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';

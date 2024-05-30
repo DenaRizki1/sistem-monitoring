@@ -1,4 +1,4 @@
-import 'package:absentip/utils/app_color.dart';
+import 'package:sistem_monitoring/utils/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -31,7 +31,7 @@ class AppbarLeading extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: AppColor.biru,
+            color: AppColor.primary,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Center(

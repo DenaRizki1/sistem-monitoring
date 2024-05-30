@@ -1,6 +1,6 @@
-import 'package:absentip/utils/helpers.dart';
-import 'package:absentip/utils/routes/app_navigator.dart';
-import 'package:absentip/wigets/label_form.dart';
+import 'package:sistem_monitoring/utils/helpers.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/wigets/label_form.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

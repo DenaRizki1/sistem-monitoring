@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:absentip/data/enums/api_status.dart';
-import 'package:absentip/data/provider/notification_model_provider.dart';
+import 'package:sistem_monitoring/data/enums/api_status.dart';
+import 'package:sistem_monitoring/data/provider/notification_model_provider.dart';
 import 'package:flutter/material.dart';
 
 class MainProvider with ChangeNotifier {

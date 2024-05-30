@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:absentip/data/enums/request_method.dart';
-import 'package:absentip/page_login.dart';
-import 'package:absentip/utils/config/api_config.dart';
-import 'package:absentip/utils/helpers.dart';
-import 'package:absentip/utils/routes/app_navigator.dart';
-import 'package:absentip/utils/sessions.dart';
+import 'package:sistem_monitoring/data/enums/request_method.dart';
+import 'package:sistem_monitoring/modules/auth/login_page.dart';
+import 'package:sistem_monitoring/utils/config/api_config.dart';
+import 'package:sistem_monitoring/utils/helpers.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/utils/sessions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -57,7 +57,7 @@ class ApiConnect {
       if (body['success'] == false) {
         if (body['message'].toString() == "Your Not Authorized") {
           clearUserSession();
-          AppNavigator.instance.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const PageLogin()), (p0) => false);
+          AppNavigator.instance.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginPage()), (p0) => false);
           showToast(body['message']);
         }
       }
@@ -97,7 +97,7 @@ class ApiConnect {
           clearUserSession();
           AppNavigator.instance.pushAndRemoveUntil(
               MaterialPageRoute(
-                builder: (context) => const PageLogin(),
+                builder: (context) => const LoginPage(),
               ),
               (p0) => false);
           showToast(result['message']);

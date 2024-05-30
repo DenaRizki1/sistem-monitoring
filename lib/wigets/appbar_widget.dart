@@ -1,5 +1,5 @@
-import 'package:absentip/utils/app_images.dart';
-import 'package:absentip/wigets/appbar_leading.dart';
+import 'package:sistem_monitoring/utils/app_images.dart';
+import 'package:sistem_monitoring/wigets/appbar_leading.dart';
 import 'package:animate_do/animate_do.dart';
 
 import 'package:flutter/material.dart';
@@ -31,6 +31,6 @@ AppBar appBarWidget(String title, {Widget? leading = const AppbarLeading(), List
         ),
       ),
     ),
-    backgroundColor: AppColor.biru,
+    backgroundColor: AppColor.primary,
   );
 }

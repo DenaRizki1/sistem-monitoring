@@ -1,8 +1,8 @@
-import 'package:absentip/data/provider/main_provider.dart';
-import 'package:absentip/page_splashscreen.dart';
-import 'package:absentip/services/dependency_injection.dart';
-import 'package:absentip/utils/app_color.dart';
-import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/data/provider/main_provider.dart';
+import 'package:sistem_monitoring/services/dependency_injection.dart';
+import 'package:sistem_monitoring/utils/app_color.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/utils/routes/app_routes.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -65,11 +65,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: AppNavigator.instance.navigatorKey,
-      title: 'Pengajar TIP',
+      title: 'Sistem Monitoring',
       theme: ThemeData(
-        primarySwatch: getMaterialColor(AppColor.hitam),
+        // primarySwatch: getMaterialColor(),
         appBarTheme: AppBarTheme(
-          color: AppColor.biru,
+          color: AppColor.primary,
           foregroundColor: Colors.black,
           systemOverlayStyle: const SystemUiOverlayStyle(
             // statusBarColor: Colors.transparent,
@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'PoppinsRegular',
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColor.biru,
+            backgroundColor: AppColor.primary,
             foregroundColor: Colors.white,
             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -102,10 +102,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       builder: EasyLoading.init(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const PageSplashscreen(),
-      },
+      initialRoute: AppRoutes.INITIAL,
     );
   }
 }

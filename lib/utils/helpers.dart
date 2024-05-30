@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:absentip/utils/app_color.dart';
-import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/utils/app_color.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -211,7 +211,7 @@ alertOpenSetting(BuildContext context, {String message = "Aplikasi memerlukan be
 Widget loadingWidget({double size = 24, Color? color}) {
   return Center(
     child: LoadingAnimationWidget.inkDrop(
-      color: color ?? AppColor.biru2,
+      color: color ?? AppColor.secondPrimary,
       size: size,
     ),
   );
@@ -233,13 +233,13 @@ Widget emptyWidget(String text, {double size = 15, Color color = Colors.black}) 
 Future<void> showLoading({String message = "Tunggu sebentar...", bool dismissOnTap = true}) async {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
-    ..textColor = AppColor.biru
+    ..textColor = AppColor.primary
     ..loadingStyle = EasyLoadingStyle.custom //This was missing in earlier code
     ..indicatorColor = Colors.transparent
     ..backgroundColor = Colors.black54
     ..boxShadow = <BoxShadow>[]
     ..indicatorWidget = LoadingAnimationWidget.inkDrop(
-      color: AppColor.biru,
+      color: AppColor.primary,
       size: 40,
     );
   await EasyLoading.show(status: message, maskType: EasyLoadingMaskType.black, dismissOnTap: dismissOnTap);
@@ -291,7 +291,7 @@ InputDecoration textFieldDecoration({String textHint = "", Widget? prefixIcon, W
         Radius.circular(12),
       ),
       borderSide: BorderSide(
-        color: AppColor.biru,
+        color: AppColor.primary,
       ),
     ),
     prefixIcon: prefixIcon,
@@ -335,7 +335,7 @@ Future<bool> openUrl(String? url, {LaunchMode launchMode = LaunchMode.externalAp
 
 Widget itemDetail(bool isColor, String title, String value) {
   return Container(
-    color: isColor ? AppColor.biru.withAlpha(50) : Colors.white,
+    color: isColor ? AppColor.primary.withAlpha(50) : Colors.white,
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,

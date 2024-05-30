@@ -1,4 +1,4 @@
-import 'package:absentip/utils/config/api_config.dart';
+import 'package:sistem_monitoring/utils/config/api_config.dart';
 
 abstract class EndPoint {
   static String login = '${getBaseUrl()}/auth_pengajar/login';

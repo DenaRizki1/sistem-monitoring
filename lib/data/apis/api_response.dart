@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:absentip/data/enums/api_status.dart';
+import 'package:sistem_monitoring/data/enums/api_status.dart';
 
 class ApiResponse {
   ApiStatus _apiStatus = ApiStatus.loading;

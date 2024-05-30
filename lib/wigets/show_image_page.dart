@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:absentip/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 

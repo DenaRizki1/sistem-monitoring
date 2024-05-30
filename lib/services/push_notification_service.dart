@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:absentip/data/contants/module_notif.dart';
-import 'package:absentip/utils/constants.dart';
-import 'package:absentip/utils/routes/app_navigator.dart';
-import 'package:absentip/utils/sessions.dart';
+import 'package:sistem_monitoring/data/contants/module_notif.dart';
+import 'package:sistem_monitoring/modules/auth/login_page.dart';
+import 'package:sistem_monitoring/utils/constants.dart';
+import 'package:sistem_monitoring/utils/routes/app_navigator.dart';
+import 'package:sistem_monitoring/utils/sessions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import '../page_login.dart';
 
 class PushNotificationService {
   PushNotificationService() {
@@ -24,7 +23,7 @@ class PushNotificationService {
   Future initialise() async {
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     const InitializationSettings initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('ic_notification'),
       iOS: DarwinInitializationSettings(),
     );
 
@@ -98,7 +97,7 @@ class PushNotificationService {
             channel.id,
             channel.name,
             channelDescription: channel.description,
-            icon: '@mipmap/ic_launcher',
+            icon: 'ic_notification',
           ),
         ),
         payload: json.encode(message.data),
@@ -110,7 +109,7 @@ class PushNotificationService {
         await clearUserSession();
         AppNavigator.instance.pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (context) => const PageLogin(),
+            builder: (context) => const LoginPage(),
           ),
           (p0) => false,
         );
@@ -141,7 +140,7 @@ class PushNotificationService {
 
       // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
       const InitializationSettings initializationSettings = InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings('ic_notification'),
         iOS: DarwinInitializationSettings(),
       );
 
@@ -167,7 +166,7 @@ class PushNotificationService {
             channel.id,
             channel.name,
             channelDescription: channel.description,
-            icon: '@mipmap/ic_launcher',
+            icon: 'ic_notification',
           ),
         ),
         payload: json.encode(message.data),
@@ -218,7 +217,7 @@ class PushNotificationService {
         if (!isLoggedIn) {
           AppNavigator.instance.pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => const PageLogin(),
+              builder: (context) => const LoginPage(),
             ),
             (p0) => false,
           );
